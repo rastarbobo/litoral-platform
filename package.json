@@ -17,6 +17,7 @@
     "check:vinext": "vinext check",
     "typecheck": "tsc --noEmit",
     "deploy": "vinext deploy",
+    "deploy:all": "pwsh ./scripts/pi-tools/deploy.ps1 -Force",
     "preview": "pnpm build && wrangler dev --local ${WRANGLER_DEV_ARGS:-}",
     "deploy:dryrun": "rm -rf worker-dist && pnpm build && wrangler deploy --outdir worker-dist --dry-run",
     "cf-typegen": "wrangler types --env-file .env.example",

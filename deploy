@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+# Cross-platform deploy wrapper for Git Bash/WSL/Linux/macOS
+# Calls the PowerShell script when on Windows, or provides instructions
+set -euo pipefail
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+if command -v pwsh &> /dev/null; then
+    pwsh "$SCRIPT_DIR/scripts/pi-tools/deploy.ps1" -Force "$@"
+elif command -v powershell &> /dev/null; then
+    powershell "$SCRIPT_DIR/scripts/pi-tools/deploy.ps1" -Force "$@"
+else
+    echo "Error: PowerShell (pwsh or powershell) is required but not installed."
+    echo "Please install PowerShell: https://learn.microsoft.com/powershell/scripting/install/installing-powershell"
+    echo "Alternatively, run: pnpm run deploy:all"
+    exit 1
+fi

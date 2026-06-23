@@ -180,3 +180,47 @@ Reference implementation:
 - Server action: `src/app/(auth)/sign-up/sign-up.actions.ts`
 - Client form: `src/app/(auth)/sign-up/sign-up.client.tsx`
 - Schema: `src/schemas/signup.schema.ts`
+
+## Deploy Tool
+
+When the user wants to ship changes to production, use the **deploy automation**:
+
+### Quick Deploy (One Step)
+
+```bash
+pnpm run deploy:all
+```
+
+This will:
+1. Stage all changed files (`git add -A`)
+2. Commit with message `deploy: automated update`
+3. Push to GitHub (`main` branch)
+4. Run `pnpm run deploy` to Cloudflare Workers
+
+### Manual Deploy Steps
+
+```bash
+# 1. Build and deploy (local only, no git)
+pnpm run deploy
+
+# 2. Commit + push + deploy (full workflow)
+pnpm run deploy:all
+```
+
+### Interactive Deploy (with confirmation)
+
+```bash
+pwsh ./scripts/pi-tools/deploy.ps1
+```
+
+This asks "Proceed? (yes/no)" before committing and deploying.
+
+### Git Workflow (separate from deploy)
+
+```bash
+git add .
+git commit -m "your message"
+git push origin main
+# Then, to deploy separately:
+pnpm run deploy
+```
