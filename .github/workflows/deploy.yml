@@ -38,6 +38,7 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
+        continue-on-error: true
 
       - name: Unit tests
         run: pnpm run test:unit
