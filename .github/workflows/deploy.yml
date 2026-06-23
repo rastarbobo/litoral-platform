@@ -99,11 +99,15 @@ jobs:
         run: pnpm run test:e2e
         continue-on-error: true
 
-      - name: Build and deploy
+      - name: Verify Cloudflare auth
         run: |
-          echo "DEBUG: token length = ${#CLOUDFLARE_API_TOKEN}"
-          echo "DEBUG: account_id = ${CLOUDFLARE_ACCOUNT_ID}"
-          pnpm run build && pnpm run deploy --skip-build
+          echo "Verifying Cloudflare authentication..."
+          npx wrangler whoami
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+      - name: Build and deploy
+        run: pnpm run build && pnpm run deploy --skip-build
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
