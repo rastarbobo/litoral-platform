@@ -107,7 +107,8 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Build and deploy
-        run: pnpm run build && pnpm run deploy --skip-build
+        # Note: pnpm run deploy (vinext deploy) includes build step
+        run: pnpm run deploy
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
