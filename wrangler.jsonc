@@ -1,157 +1,132 @@
-/**
- * For more details on how to configure Wrangler, refer to:
- * https://developers.cloudflare.com/workers/wrangler/configuration/
- */
- {
-    "$schema": "node_modules/wrangler/config-schema.json",
-    "account_id": "0d5667a195a90458761fe59fca898f9c",
-    "name": "cloudflare-workers-nextjs-saas-template",
-    "main": "./worker-entrypoint.ts",
-    "preview_urls": true,
-    "compatibility_date": "2026-04-21",
-    "compatibility_flags": ["nodejs_compat"],
-    "assets": {
-      "directory": "dist/client",
-      "binding": "ASSETS",
-      "not_found_handling": "none"
-    },
-    "images": {
-      "binding": "IMAGES"
-    },
-    "observability": {
-      "enabled": true,
-      "logs": {
-        "enabled": true
-      },
-      "traces": {
-        "enabled": true,
-      }
-    },
-    "upload_source_maps": true,
-    /**
-     * Smart Placement
-     * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
-     */
-    "placement": { "mode": "smart" },
-    "triggers": {
-      "crons": ["*/30 * * * *"]
-    },
-    "queues": {
-      "producers": [
-        {
-          "binding": "SCHEDULER_QUEUE",
-          "queue": "cloudflare-workers-nextjs-saas-template-scheduler"
-        },
-        {
-          "binding": "ANALYTICS_QUEUE",
-          "queue": "cloudflare-workers-nextjs-saas-template-analytics"
-        },
-        {
-          "binding": "COMPETITOR_ACTIVATED_QUEUE",
-          "queue": "cloudflare-workers-nextjs-saas-template-competitor-activated"
-        },
-        {
-          "binding": "TELEGRAM_UPDATES_QUEUE",
-          "queue": "cloudflare-workers-nextjs-saas-template-telegram-updates"
-        },
-      ],
-      "consumers": [
-        {
-          "queue": "cloudflare-workers-nextjs-saas-template-scheduler",
-          "max_batch_size": 10,
-          "max_batch_timeout": 5,
-          "max_retries": 5,
-          "retry_delay": 60
-        },
-        {
-          "queue": "cloudflare-workers-nextjs-saas-template-analytics",
-          "max_batch_size": 100,
-          "max_batch_timeout": 5,
-          "max_retries": 3,
-          "retry_delay": 30
-        },
-        {
-          "queue": "cloudflare-workers-nextjs-saas-template-telegram-updates",
-          "max_batch_size": 50,
-          "max_batch_timeout": 5,
-          "max_retries": 3,
-          "retry_delay": 30
-        }
-      ]
-    },
-
-
-    "ai": {
-      "binding": "AI"
-    },
-
-    /**
-     * Bindings
-     * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
-     * databases, object storage, AI inference, real-time communication and more.
-     * https://developers.cloudflare.com/workers/runtime-apis/bindings/
-     */
-
-    /**
-     * Environment Variables
-     * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
-     */
-    "vars": {
-        "APP_TEST_MODE": "false",
-        "EMAIL_FROM": "no-reply@notifications.lubomirgeorgiev.com",
-        "EMAIL_FROM_NAME": "Lubomir Georgiev",
-        "EMAIL_REPLY_TO": "lubo@lubomirgeorgiev.com"
-    },
-    "send_email": [
-        {
-            "name": "EMAIL",
-            "allowed_sender_addresses": [
-                "no-reply@notifications.lubomirgeorgiev.com"
-            ],
-            "remote": true
-        }
-    ],
-    /**
-     * Note: Use secrets to store sensitive data.
-     * https://developers.cloudflare.com/workers/configuration/secrets/
-     */
-
-    "d1_databases": [
-        {
-            "binding": "NEXT_TAG_CACHE_D1",
-            "database_name": "cloudflare-workers-nextjs-saas",
-            "database_id": "db968793-55f4-481e-b281-7e1907a775b1",
-            "migrations_dir": "src/db/migrations"
-        }
-    ],
-    "kv_namespaces": [
-        {
-            "binding": "NEXT_INC_CACHE_KV",
-            "id": "e922d6e22f4a46b6a92be653e90c6ca1"
-        },
-        {
-            "binding": "OPT_OUT_KV",
-            "id": "opt_out_kv_placeholder"
-        },
-        {
-            "binding": "TELEGRAM_DEDUP_KV",
-            "id": "telegram_dedup_kv_placeholder"
-        }
-    ],
-    "migrations": [
-        {
-            "tag": "v1",
-            "new_sqlite_classes": ["DOQueueHandler"]
-        },
-        {
-            "tag": "v2",
-            "deleted_classes": ["DOQueueHandler"]
-        }
-    ],
-    "r2_buckets": [
-        {
-            "binding": "NEXT_INC_CACHE_R2_BUCKET",
-            "bucket_name": "cloudflare-workers-nextjs-saas-template"
-        }
-    ]
-  }
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"account_id": "9f531fcfc389cf7496eec10d55bdb182",
+	"name": "cloudflare-workers-nextjs-saas-template",
+	"main": "./worker-entrypoint.ts",
+	"preview_urls": true,
+	"compatibility_date": "2026-04-21",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"directory": "dist/client",
+		"binding": "ASSETS",
+		"not_found_handling": "none"
+	},
+	"images": {
+		"binding": "IMAGES"
+	},
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"enabled": true
+		},
+		"traces": {
+			"enabled": true
+		}
+	},
+	"upload_source_maps": true,
+	"placement": {
+		"mode": "smart"
+	},
+	"triggers": {
+		"crons": ["*/30 * * * *"]
+	},
+	"queues": {
+		"producers": [
+			{
+				"binding": "SCHEDULER_QUEUE",
+				"queue": "cloudflare-workers-nextjs-saas-template-scheduler"
+			},
+			{
+				"binding": "ANALYTICS_QUEUE",
+				"queue": "cloudflare-workers-nextjs-saas-template-analytics"
+			},
+			{
+				"binding": "COMPETITOR_ACTIVATED_QUEUE",
+				"queue": "cloudflare-workers-nextjs-saas-template-competitor-activated"
+			},
+			{
+				"binding": "TELEGRAM_UPDATES_QUEUE",
+				"queue": "cloudflare-workers-nextjs-saas-template-telegram-updates"
+			}
+		],
+		"consumers": [
+			{
+				"queue": "cloudflare-workers-nextjs-saas-template-scheduler",
+				"max_batch_size": 10,
+				"max_batch_timeout": 5,
+				"max_retries": 5,
+				"retry_delay": 60
+			},
+			{
+				"queue": "cloudflare-workers-nextjs-saas-template-analytics",
+				"max_batch_size": 100,
+				"max_batch_timeout": 5,
+				"max_retries": 3,
+				"retry_delay": 30
+			},
+			{
+				"queue": "cloudflare-workers-nextjs-saas-template-telegram-updates",
+				"max_batch_size": 50,
+				"max_batch_timeout": 5,
+				"max_retries": 3,
+				"retry_delay": 30
+			}
+		]
+	},
+	"ai": {
+		"binding": "AI"
+	},
+	"vars": {
+		"APP_TEST_MODE": "false",
+		"EMAIL_FROM": "no-reply@notifications.lubomirgeorgiev.com",
+		"EMAIL_FROM_NAME": "Lubomir Georgiev",
+		"EMAIL_REPLY_TO": "lubo@lubomirgeorgiev.com"
+	},
+	"send_email": [
+		{
+			"name": "EMAIL",
+			"allowed_sender_addresses": [
+				"no-reply@notifications.lubomirgeorgiev.com"
+			],
+			"remote": true
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "NEXT_TAG_CACHE_D1",
+			"database_name": "cloudflare-workers-nextjs-saas",
+			"database_id": "8e12cc10-2a53-40e1-b33c-779fdeed9b90",
+			"migrations_dir": "src/db/migrations"
+		}
+	],
+	"kv_namespaces": [
+		{
+			"binding": "NEXT_INC_CACHE_KV",
+			"id": "c4c7f300f7c5423399e3e965b6f299b0"
+		},
+		{
+			"binding": "OPT_OUT_KV",
+			"id": "8a11136dc57a4f9ba203b1e20533c10b"
+		},
+		{
+			"binding": "TELEGRAM_DEDUP_KV",
+			"id": "ac2e7849757d482a8b89f4083dbc8b74"
+		}
+	],
+	"migrations": [
+		{
+			"tag": "v1",
+			"new_sqlite_classes": ["DOQueueHandler"]
+		},
+		{
+			"tag": "v2",
+			"deleted_classes": ["DOQueueHandler"]
+		}
+	],
+	"r2_buckets": [
+		{
+			"binding": "NEXT_INC_CACHE_R2_BUCKET",
+			"bucket_name": "cloudflare-workers-nextjs-saas-template"
+		}
+	]
+}
