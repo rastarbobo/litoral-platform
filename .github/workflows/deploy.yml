@@ -99,8 +99,8 @@ jobs:
         run: pnpm run test:e2e
         continue-on-error: true
 
-      - name: Deploy to Cloudflare
-        run: pnpm run deploy --skip-build
+      - name: Build and deploy
+        run: pnpm run build && pnpm run deploy --skip-build
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
