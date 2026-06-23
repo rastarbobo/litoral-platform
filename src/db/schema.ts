@@ -1,4 +1,4 @@
-import { sqliteTable, integer, text, index, unique } from "drizzle-orm/sqlite-core";
+import { sqliteTable, integer, text, index, unique, real } from "drizzle-orm/sqlite-core";
 import { relations, sql } from "drizzle-orm";
 import { type InferSelectModel } from "drizzle-orm";
 
@@ -599,6 +599,287 @@ export const passKeyCredentialRelations = relations(passKeyCredentialTable, ({ o
   }),
 }));
 
+export const ONBOARDING_STATE = {
+  MAGIC_LINK_SENT: 'magic_link_sent',
+  DATA_CONFIRMED: 'data_confirmed',
+  BRAND_PERSONA_PENDING: 'brand_persona_pending',
+  BRAND_PERSONA_COMPLETED: 'brand_persona_completed',
+  COMPLETED: 'completed',
+} as const;
+
+export const onboardingStateTuple = Object.values(ONBOARDING_STATE) as [string, ...string[]];
+
+export const restaurantsTable = sqliteTable("restaurants", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `rest_${createId()}`).notNull(),
+  slug: text("slug", { length: 255 }).unique(),
+  name: text("name", { length: 255 }).notNull(),
+  location: text("location", { length: 255 }),
+  googlePlaceId: text("google_place_id", { length: 255 }),
+  googleRating: real("google_rating"),
+  reviewCount: integer("review_count"),
+  businessType: text("business_type", { length: 100 }),
+  cuisineType: text("cuisine_type", { length: 100 }),
+  locationArea: text("location_area", { length: 255 }),
+  peakSeasonStart: text("peak_season_start", { length: 10 }),
+  qualificationStatus: text("qualification_status", { enum: ['pending', 'qualified', 'disqualified'] }).default('pending').notNull(),
+  exclusionReason: text("exclusion_reason"),
+  failedRatingGate: integer("failed_rating_gate", { mode: "boolean" }).default(false),
+  failedReviewsGate: integer("failed_reviews_gate", { mode: "boolean" }).default(false),
+  failedBusinessTypeGate: integer("failed_business_type_gate", { mode: "boolean" }).default(false),
+  instagramFollowers: integer("instagram_followers"),
+  instagramEngagementRate: integer("instagram_engagement_rate_bps"), // basis points for precision (e.g., 3420 = 3.42%)
+  googleMapsData: text("google_maps_data", { mode: "json" }), // validated at ingestion via zod schema
+  competitorData: text("competitor_data", { mode: "json" }),   // validated at ingestion via zod schema
+  lastScrapedAt: integer("last_scraped_at", { mode: "timestamp" }),
+  behavioralState: integer("behavioral_state").default(0).notNull(),
+  marketingReadinessScore: integer("marketing_readiness_score"),
+  scoreBand: text("score_band", { length: 50 }),
+  primaryGapExplanation: text("primary_gap_explanation"),
+  diagnosticPackage: text("diagnostic_package", { mode: "json" }),
+  enhancedPhotoUrl: text("enhanced_photo_url", { length: 1000 }),
+  croVariant: text("cro_variant", { enum: ['A_SCORE', 'B_VISUAL', 'C_NARRATIVE'] }),
+  offerExpiresAt: integer("offer_expires_at", { mode: "timestamp" }),
+  // Onboarding (Story 3.1)
+  onboardingState: text("onboarding_state", { enum: onboardingStateTuple }),
+  magicLinkTokenHash: text("magic_link_token_hash", { length: 128 }),
+  magicLinkExpiresAt: integer("magic_link_expires_at", { mode: "timestamp" }),
+  onboardingDataCorrections: text("onboarding_data_corrections", { mode: "json" }),
+  // Brand Persona (Story 3.2)
+  brandPersonaFragment: text("brand_persona_fragment"),
+  brandPersonaR2Key: text("brand_persona_r2_key", { length: 500 }),
+  // Scarcity Enforcement (Story 3.3)
+  subscriptionStatus: text("subscription_status", { enum: ['prospect', 'active_saas', 'active_agency', 'hibernate'] }).default('prospect').notNull(),
+  // Stripe Subscription (Story 3.4)
+  stripeCustomerId: text("stripe_customer_id", { length: 255 }),
+  stripeSubscriptionId: text("stripe_subscription_id", { length: 255 }),
+  subscriptionTier: text("subscription_tier", { enum: ['starter', 'pro', 'annual_pro'] }),
+  subscriptionCurrentPeriodEnd: integer("subscription_current_period_end", { mode: "timestamp" }),
+  // Chrome Extension auth (Story 6.2)
+  extensionAuthToken: text("extension_auth_token", { length: 255 }),
+  // Campaign Engine (Epic 4)
+  campaignCronOffsetMinutes: integer("campaign_cron_offset_minutes").default(0),
+  campaignPending: text("campaign_pending", { mode: "json" }),
+  lastRunAt: integer("last_run_at", { mode: "timestamp" }),
+  telegramChatId: text("telegram_chat_id", { length: 255 }),
+  // Offline monitoring (Story 6.5) — last time owner was alerted about extension being offline
+  lastOfflineAlertAt: integer("last_offline_alert_at", { mode: "timestamp" }),
+  // Operator P1 escalation tracking — last time a P1 operator alert was sent for this restaurant
+  lastOperatorAlertAt: integer("last_operator_alert_at", { mode: "timestamp" }),
+  // Off-Season Guardian Mode (Story 7.3)
+  operationalMode: text("operational_mode", { enum: ["peak_season", "local_seo_guardian", "pre_season_booking", "hibernate"] }).default("peak_season").notNull(),
+  modeChangedAt: integer("mode_changed_at", { mode: "timestamp" }),
+  peakSeasonEndDetectedAt: integer("peak_season_end_detected_at", { mode: "timestamp" }),
+  guardianModeSince: integer("guardian_mode_since", { mode: "timestamp" }),
+  lastGuardianReportAt: integer("last_guardian_report_at", { mode: "timestamp" }),
+  seoGuardianConfig: text("seo_guardian_config", { mode: "json" }).$type<SeoGuardianConfig>(),
+  // Pre-Season Booking Engine (Story 7.4) — quick flag for orchestrator branch checks
+  preSeasonBookingEnabled: integer("pre_season_booking_enabled", { mode: "boolean" }).default(false).notNull(),
+  // Hibernate Tier (Story 7.5)
+  hibernateSince: integer("hibernate_since", { mode: "timestamp" }),
+  reactivationEligibility: text("reactivation_eligibility", { mode: "json" }).$type<ReactivationEligibility>(),
+
+}, (table) => ([
+  index('restaurants_slug_idx').on(table.slug),
+  index('restaurants_qualification_status_idx').on(table.qualificationStatus),
+  index('restaurants_name_idx').on(table.name),
+  index('restaurants_location_idx').on(table.location),
+  index('restaurants_cuisine_location_idx').on(table.cuisineType, table.locationArea),
+  index('restaurants_magic_link_token_hash_idx').on(table.magicLinkTokenHash),
+  index('restaurants_scarcity_idx').on(table.cuisineType, table.locationArea, table.subscriptionStatus),
+  index('restaurants_extension_auth_token_idx').on(table.extensionAuthToken),
+  index('restaurants_last_offline_alert_at_idx').on(table.lastOfflineAlertAt),
+  index('restaurants_last_operator_alert_at_idx').on(table.lastOperatorAlertAt),
+  index('restaurants_operational_mode_idx').on(table.operationalMode),
+  index('restaurants_guardian_mode_since_idx').on(table.guardianModeSince),
+]));
+
+export const environmentalSignalsTable = sqliteTable("environmental_signals", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `esig_${createId()}`).notNull(),
+  cityName: text("city_name", { length: 255 }).notNull(),
+  date: text("date", { length: 50 }).notNull(),
+  signalType: text("signal_type", { enum: ['weather', 'event', 'trending', 'pre_season_window', 'season_close', 'season_open'] }).default('weather').notNull(),
+  weatherData: text("weather_data", { mode: "json" }),
+  localEvents: text("local_events", { mode: "json" }),
+  trendingContent: text("trending_content", { mode: "json" }),
+}, (table) => ([
+  index('environmental_signals_city_date_idx').on(table.cityName, table.date),
+  index('environmental_signals_signal_type_idx').on(table.signalType),
+  unique('environmental_signals_city_date_unique').on(table.cityName, table.date),
+]));
+
+export const prospectEventsTable = sqliteTable("prospect_events", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `pevt_${createId()}`).notNull(),
+  prospectId: text("prospect_id").notNull().references(() => restaurantsTable.id, { onDelete: "cascade" }),
+  fromState: integer("from_state").notNull(),
+  toState: integer("to_state").notNull(),
+  trigger: text("trigger", { enum: ['email_open', 'page_visit', 'demo_download', 'reply', 'opt_out', 'retarget_season', 'retarget_competitor'] }).notNull(),
+}, (table) => ([
+  index('prospect_events_prospect_id_idx').on(table.prospectId),
+]));
+
+export const analyticsEventsTable = sqliteTable("analytics_events", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `aevt_${createId()}`).notNull(),
+  prospectId: text("prospect_id").references(() => restaurantsTable.id, { onDelete: "cascade" }),
+  eventType: text("event_type").notNull(), // 'page_view', 'scroll', 'click', 'email_open'
+  metadata: text("metadata", { mode: "json" }), // e.g. { scroll_depth: 75, path: '/...' }
+}, (table) => ([
+  index('analytics_events_prospect_id_idx').on(table.prospectId),
+  index('analytics_events_event_type_idx').on(table.eventType),
+  index('analytics_events_created_at_idx').on(table.createdAt),
+]));
+
+export const agentConfigTable = sqliteTable("agent_config", {
+  ...commonColumns,
+  agentCode: text("agent_code", { length: 50 }).primaryKey().notNull(),
+  provider: text("provider", { length: 50 }).notNull(),
+  model: text("model", { length: 100 }).notNull(),
+  temperature: real("temperature").notNull(),
+  maxTokens: integer("max_tokens").notNull(),
+}, (table) => ([
+  // Prevent duplicate provider/model combos (e.g., one config per model)
+  unique('agent_config_provider_model_unique').on(table.provider, table.model),
+  // CHECK constraints handled at application layer (Zod); SQLite CHECK syntax varies by D1 runtime
+]));
+
+export const CAMPAIGN_STATUS = {
+  PENDING_APPROVAL: 'pending_approval',
+  APPROVED: 'approved',
+  PENDING_REVISION: 'pending_revision',
+  REJECTED: 'rejected',
+  PENDING_SCHEDULE: 'pending_schedule',
+  SCHEDULED: 'scheduled',
+  PUBLISHED: 'published',
+  FAILED: 'failed',
+} as const;
+
+export const campaignStatusTuple = Object.values(CAMPAIGN_STATUS) as [string, ...string[]];
+
+export const NOTIFICATION_STATUS = {
+  PENDING: 'pending',
+  SENT: 'sent',
+  FAILED: 'failed',
+  RETRYING: 'retrying',
+} as const;
+
+export const notificationStatusTuple = Object.values(NOTIFICATION_STATUS) as [string, ...string[]];
+
+export const campaignsTable = sqliteTable("campaigns", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `camp_${createId()}`).notNull(),
+  restaurantId: text("restaurant_id").notNull().references(() => restaurantsTable.id, { onDelete: "cascade" }),
+  source: text("source").notNull(), // 'autonomous' | 'owner_initiated'
+  ownerInputType: text("owner_input_type"), // 'photo' | 'voice' | 'text' | 'video' — null for autonomous
+  campaignType: text("campaign_type").notNull(), // 'flash_offer' | 'seasonal_event' | 'daily_special' | 'brand_awareness' | 'pre_season_booking' | 'guardian'
+  // Campaign content (Story 5.1)
+  headline: text("headline"),
+  subheadline: text("subheadline"),
+  whyNowContext: text("why_now_context"), // signal-driven explanation shown to owner
+  assetUrl: text("asset_url", { length: 1000 }),
+  assetR2Key: text("asset_r2_key", { length: 500 }), // R2 key for rendered thumbnail/asset
+  fullAssetR2Key: text("full_asset_r2_key", { length: 500 }), // full resolution asset
+  caption: text("caption"),
+  platforms: text("platforms"), // comma-separated: 'instagram,facebook,tiktok,gbp'
+  signalTrigger: text("signal_trigger", { mode: "json" }), // JSON of signal data that triggered campaign
+  signalsTriggerHash: text("signals_trigger_hash"),
+  // Status lifecycle (Story 5.1, 6.1)
+  status: text("status", { enum: campaignStatusTuple }).default('pending_approval').notNull(),
+  telegramMessageId: integer("telegram_message_id"), // for reply threading
+  revisionCount: integer("revision_count").default(0).notNull(),
+  // Nudge & escalation (Story 5.1)
+  nudgeCount: integer("nudge_count").default(0).notNull(),
+  lastNudgeAt: integer("last_nudge_at", { mode: "timestamp" }),
+  approvedAt: integer("approved_at", { mode: "timestamp" }),
+  rejectedAt: integer("rejected_at", { mode: "timestamp" }),
+  // Extension scheduling lock (Story 6.2)
+  claimedAt: integer("claimed_at", { mode: "timestamp" }),
+  scheduledAt: integer("scheduled_at", { mode: "timestamp" }),
+  claimedBy: text("claimed_by", { length: 255 }),
+  revertCount: integer("revert_count").default(0).notNull(),
+  // Notification tracking (Decision 3)
+  notificationStatus: text("notification_status", { enum: notificationStatusTuple }).default('pending').notNull(),
+  notificationAttempts: integer("notification_attempts").default(0).notNull(),
+  notificationLastError: text("notification_last_error"),
+  notificationSentAt: integer("notification_sent_at", { mode: "timestamp" }),
+
+}, (table) => ([
+  index('campaigns_restaurant_id_idx').on(table.restaurantId),
+  index('campaigns_status_idx').on(table.status),
+  index('campaigns_source_idx').on(table.source),
+  index('campaigns_created_at_idx').on(table.createdAt),
+  index('campaigns_notification_status_idx').on(table.notificationStatus),
+  index('campaigns_status_claimed_scheduled_idx').on(table.status, table.claimedAt, table.scheduledAt),
+]));
+
+export const LOCK_STATUS = {
+  HELD: 'held',
+  RELEASED: 'released',
+} as const;
+
+export const lockStatusTuple = Object.values(LOCK_STATUS) as [string, ...string[]];
+
+export const generationLocksTable = sqliteTable("generation_locks", {
+  id: text().primaryKey().$defaultFn(() => `lock_${createId()}`).notNull(),
+  restaurantSlug: text("restaurant_slug").notNull(),
+  lockDate: text("lock_date").notNull(), // YYYY-MM-DD format
+  lockUntil: integer("lock_until", { mode: "timestamp" }).notNull(), // Until when the lock is valid
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "cascade" }),
+  status: text("status", { enum: lockStatusTuple }).default('held').notNull(),
+}, (table) => ([
+  unique('generation_locks_unique_per_restaurant_per_day').on(table.restaurantSlug, table.lockDate),
+  index('generation_locks_restaurant_slug_idx').on(table.restaurantSlug),
+  index('generation_locks_lock_date_idx').on(table.lockDate),
+  index('generation_locks_lock_until_idx').on(table.lockUntil),
+]));
+
+
+export const TEMPLATE_FORGE_STATUS = {
+  ACTIVE: 'active',
+  PROPOSED: 'proposed',
+  DEPRECATED: 'deprecated',
+} as const;
+
+export const templateForgeStatusTuple = Object.values(TEMPLATE_FORGE_STATUS) as [string, ...string[]];
+
+export const templateForgeTable = sqliteTable("template_forge", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `tf_${createId()}`).notNull(),
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "set null" }),
+  templateId: text("template_id", { length: 255 }).notNull(),
+  campaignType: text("campaign_type", { enum: ['flash_offer', 'seasonal_event', 'daily_special', 'brand_awareness', 'pre_season_booking'] }).notNull(),
+  impressions: integer("impressions").default(0).notNull(),
+  engagementRateBps: integer("engagement_rate_bps").default(0).notNull(),
+  ctrBps: integer("ctr_bps").default(0).notNull(),
+  conversions: integer("conversions").default(0).notNull(),
+  performanceScore: real("performance_score").default(0).notNull(),
+  lastSelectedAt: integer("last_selected_at", { mode: "timestamp" }),
+  status: text("status", { enum: templateForgeStatusTuple }).default('active').notNull(),
+  proposedAt: integer("proposed_at", { mode: "timestamp" }),
+  parentTemplateId: text("parent_template_id", { length: 255 }),
+  ncatParametersDiff: text("ncat_parameters_diff", { mode: "json" }),
+  performanceHypothesis: text("performance_hypothesis"),
+  schemaVersion: text("schema_version", { length: 10 }).default('1.0').notNull(),
+  deprecatedAt: integer("deprecated_at", { mode: "timestamp" }),
+}, (table) => ([
+  index('template_forge_restaurant_campaign_status_idx').on(table.restaurantId, table.campaignType, table.status),
+  index('template_forge_template_id_idx').on(table.templateId),
+  index('template_forge_performance_score_idx').on(table.performanceScore),
+  index('template_forge_last_selected_at_idx').on(table.lastSelectedAt),
+  index('template_forge_status_proposed_at_idx').on(table.status, table.proposedAt),
+  unique('template_forge_restaurant_template_campaign_unique').on(table.restaurantId, table.templateId, table.campaignType),
+]));
+
+// Template Forge relations
+export const templateForgeRelations = relations(templateForgeTable, ({ one }) => ({
+  restaurant: one(restaurantsTable, {
+    fields: [templateForgeTable.restaurantId],
+    references: [restaurantsTable.id],
+  }),
+}));
+
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
 export type User = InferSelectModel<typeof userTable>;
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
@@ -624,6 +905,12 @@ export type CmsEntryMedia = InferSelectModel<typeof cmsEntryMediaTable>;
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
 export type CmsTag = InferSelectModel<typeof cmsTagTable>;
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type Restaurant = InferSelectModel<typeof restaurantsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type SubscriptionStatus = 'prospect' | 'active_saas' | 'active_agency' | 'hibernate';
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type SubscriptionTier = 'starter' | 'pro' | 'annual_pro';
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
 export type CmsEntryTag = InferSelectModel<typeof cmsEntryTagTable>;
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
 export type CmsEntryVersion = InferSelectModel<typeof cmsEntryVersionTable>;
@@ -633,3 +920,178 @@ export type CmsNavigationItem = InferSelectModel<typeof cmsNavigationItemTable>;
 export type CmsNavigationRedirect = InferSelectModel<typeof cmsNavigationRedirectTable>;
 // oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
 export type ScheduledJob = InferSelectModel<typeof scheduledJobTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type EnvironmentalSignal = InferSelectModel<typeof environmentalSignalsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type ProspectEvent = InferSelectModel<typeof prospectEventsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type AnalyticsEvent = InferSelectModel<typeof analyticsEventsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type AgentConfig = InferSelectModel<typeof agentConfigTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+// Campaigns relations — required for Drizzle relational queries (with: { restaurant: true })
+export const campaignsRelations = relations(campaignsTable, ({ one, many }) => ({
+  restaurant: one(restaurantsTable, {
+    fields: [campaignsTable.restaurantId],
+    references: [restaurantsTable.id],
+  }),
+  revisions: many(campaignRevisionsTable),
+}));
+
+export type Campaign = InferSelectModel<typeof campaignsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type GenerationLock = InferSelectModel<typeof generationLocksTable>;
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type TemplateForge = InferSelectModel<typeof templateForgeTable>;
+// Campaign Revisions table (Story 5.2: Telegram Conversational Revisions)
+export const campaignRevisionsTable = sqliteTable("campaign_revisions", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `crev_${createId()}`).notNull(),
+  campaignId: text("campaign_id").notNull().references(() => campaignsTable.id, { onDelete: "cascade" }),
+  revisionNumber: integer("revision_number").notNull(),
+  originalCaption: text("original_caption"),
+  revisedCaption: text("revised_caption"),
+  instructions: text("instructions"), // owner's revision request text
+  aiResponse: text("ai_response", { mode: "json" }), // full AI output (turn, visual_direction, etc.)
+  statusBefore: text("status_before", { enum: campaignStatusTuple }).notNull(),
+  statusAfter: text("status_after", { enum: campaignStatusTuple }).notNull(),
+}, (table) => ([
+  index('campaign_revisions_campaign_id_idx').on(table.campaignId),
+  index('campaign_revisions_revision_number_idx').on(table.campaignId, table.revisionNumber),
+]));
+
+export const campaignRevisionsRelations = relations(campaignRevisionsTable, ({ one }) => ({
+  campaign: one(campaignsTable, {
+    fields: [campaignRevisionsTable.campaignId],
+    references: [campaignsTable.id],
+  }),
+}));
+
+// oxlint-disable-next-line project/no-unused-module-exports -- Drizzle schema model types are exported as app/tooling contracts.
+export type TemplateForgeStatus = typeof TEMPLATE_FORGE_STATUS[keyof typeof TEMPLATE_FORGE_STATUS];
+// oxlint-disable-next-line project/no-unused-module-exports
+export type CampaignRevision = InferSelectModel<typeof campaignRevisionsTable>;
+
+// ─── Results Dashboard (Story 7.1) ────────────────────────
+
+/** Campaign Analytics — weekly aggregate of published campaign performance. */
+export const campaignAnalyticsTable = sqliteTable("campaign_analytics", {
+  ...commonColumns,
+  id: text().primaryKey().$defaultFn(() => `ca_${createId()}`).notNull(),
+  campaignId: text("campaign_id").references(() => campaignsTable.id, { onDelete: "cascade" }).notNull(),
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "cascade" }).notNull(),
+  platform: text("platform", { enum: ['instagram', 'facebook', 'tiktok', 'gbp'] }).notNull(),
+  impressions: integer("impressions").default(0).notNull(),
+  engagementRateBps: integer("engagement_rate_bps").default(0).notNull(), // basis points (e.g., 3420 = 3.42%)
+  clicks: integer("clicks").default(0).notNull(),
+  conversions: integer("conversions").default(0).notNull(),
+  earlyBookingIntentClicks: integer("early_booking_intent_clicks").default(0).notNull(),
+  weekStart: integer("week_start", { mode: "timestamp" }).notNull(), // Monday 00:00:00 UTC
+  fetchedAt: integer("fetched_at", { mode: "timestamp" }).notNull(),
+}, (table) => ([
+  index('ca_restaurant_week_idx').on(table.restaurantId, table.weekStart),
+  index('ca_campaign_id_idx').on(table.campaignId),
+]));
+
+/** Restaurant Metrics — per-restaurant configurable constants for ROI calculation. */
+export const restaurantMetricsTable = sqliteTable("restaurant_metrics", {
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "cascade" }).primaryKey(),
+  localConversionRate: real("local_conversion_rate").default(0.02).notNull(), // default 2% of reach converts to tables
+  avgRevenuePerTable: real("avg_revenue_per_table").default(50).notNull(), // default $50
+  avgTableSize: real("avg_table_size").default(2.5).notNull(),
+  lastUpdatedAt: integer("last_updated_at", { mode: "timestamp" }).notNull(),
+});
+
+// oxlint-disable-next-line project/no-unused-module-exports
+export type CampaignAnalytics = InferSelectModel<typeof campaignAnalyticsTable>;
+// oxlint-disable-next-line project/no-unused-module-exports
+export type RestaurantMetrics = InferSelectModel<typeof restaurantMetricsTable>;
+
+// ─── Off-Season Guardian Mode (Story 7.3) ────────────────
+
+export const OPERATIONAL_MODE = {
+  PEAK_SEASON: "peak_season",
+  LOCAL_SEO_GUARDIAN: "local_seo_guardian",
+  PRE_SEASON_BOOKING: "pre_season_booking",
+  HIBERNATE: "hibernate",
+} as const;
+
+export type OperationalMode = typeof OPERATIONAL_MODE[keyof typeof OPERATIONAL_MODE];
+
+export interface SeoGuardianConfig {
+  peakSeasonEndMonth: number;  // default 10 (October)
+  guardianStartMonth: number;  // default 11 (November)
+  guardianEndMonth: number;    // default 12 (December)
+  postsPerWeek: number;        // default 2
+  guardianContentTypes: ("community" | "history" | "holiday_anticipation" | "local_highlight")[];
+  reviewResponseEnabled: boolean; // default true
+  monthlyReportEnabled: boolean;  // default true
+}
+
+export const DEFAULT_SEO_GUARDIAN_CONFIG: SeoGuardianConfig = {
+  peakSeasonEndMonth: 10,
+  guardianStartMonth: 11,
+  guardianEndMonth: 12,
+  postsPerWeek: 2,
+  guardianContentTypes: ["community", "history", "holiday_anticipation", "local_highlight"],
+  reviewResponseEnabled: true,
+  monthlyReportEnabled: true,
+};
+
+export const reviewResponsesTable = sqliteTable("review_responses", {
+  id: text().primaryKey().$defaultFn(() => `rr_${createId()}`).notNull(),
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "cascade" }).notNull(),
+  reviewId: text("review_id").notNull(), // Google Review ID
+  reviewText: text("review_text").notNull(),
+  reviewRating: integer("review_rating").notNull(),
+  reviewerName: text("reviewer_name").notNull(),
+  aiResponse: text("ai_response"), // null if AI call failed
+  fallbackUsed: integer("fallback_used", { mode: "boolean" }).default(false),
+  status: text("status", { enum: ["drafted", "approved", "rejected", "published"] }).default("drafted").notNull(),
+  approvedAt: integer("approved_at", { mode: "timestamp" }),
+  publishedAt: integer("published_at", { mode: "timestamp" }),
+  createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+  updatedAt: integer("updated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+}, (table) => ([
+  index("rr_restaurant_status_idx").on(table.restaurantId, table.status),
+  index("rr_review_id_idx").on(table.reviewId),
+]));
+
+export const guardianReportsTable = sqliteTable("guardian_reports", {
+  id: text().primaryKey().$defaultFn(() => `gr_${createId()}`).notNull(),
+  restaurantId: text("restaurant_id").references(() => restaurantsTable.id, { onDelete: "cascade" }).notNull(),
+  reportMonth: integer("report_month").notNull(), // YYYYMM format (e.g., 202611)
+  rankingStability: text("ranking_stability", { enum: ["stable", "slight_decline", "significant_decline"] }).notNull(),
+  reviewCoverage: text("review_coverage", { mode: "json" }).$type<ReviewCoverage>().notNull(),
+  decayAvoided: text("decay_avoided").notNull(), // human-readable description
+  postsPublished: integer("posts_published").default(0).notNull(),
+  generatedAt: integer("generated_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
+}, (table) => ([
+  index("gr_restaurant_month_idx").on(table.restaurantId, table.reportMonth),
+  unique("gr_restaurant_month_unique").on(table.restaurantId, table.reportMonth),
+]));
+
+export interface ReviewCoverage {
+  drafted: number;
+  approved: number;
+  published: number;
+  total: number;
+}
+
+// oxlint-disable-next-line project/no-unused-module-exports
+export type ReviewResponse = InferSelectModel<typeof reviewResponsesTable>;
+// oxlint-disable-next-line project/no-unused-module-exports
+export type GuardianReport = InferSelectModel<typeof guardianReportsTable>;
+
+// ─── Hibernate Tier (Story 7.5) ──────────────────────────
+
+export interface ReactivationEligibility {
+  campaignsGenerated: number;
+  lastCampaignAt: string | null; // ISO date
+  r2AssetCount: number;
+  r2TotalSizeBytes: number;
+  hasBrandPersona: boolean;
+  connectedPlatforms: string[]; // ['instagram', 'facebook', 'gbp']
+  eligibleForReactivation: boolean; // true unless data was purged
+  reactivationGracePeriodEnds: string | null; // ISO date
+}

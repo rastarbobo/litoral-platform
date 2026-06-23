@@ -328,3 +328,13 @@ INSERT INTO cms_navigation_redirect (
 )
 VALUES
   ('cms_red_docs001', 'docs', '/docs/getting-started/setup', '/docs/getting-started/introduction', 301, 1736641800, 1736641800, 0);
+
+-- Seed agent_config rows for the 6-stage AI pipeline (Epic 4)
+INSERT OR REPLACE INTO agent_config (agent_code, provider, model, temperature, max_tokens, createdAt, updatedAt, updateCounter)
+VALUES
+  ('signal_collector', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.3, 1024, 1736641800, 1736641800, 0),
+  ('opportunity_detector', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.5, 512, 1736641800, 1736641800, 0),
+  ('offer_strategist', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.7, 512, 1736641800, 1736641800, 0),
+  ('creative_director', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.8, 1536, 1736641800, 1736641800, 0),
+  ('production_designer', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.5, 512, 1736641800, 1736641800, 0),
+  ('analyst', 'workers-ai', '@cf/meta/llama-3.1-8b-instruct', 0.3, 2048, 1736641800, 1736641800, 0);

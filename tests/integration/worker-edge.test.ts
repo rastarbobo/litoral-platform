@@ -111,4 +111,73 @@ describe("worker edge integration", () => {
       expect(body.headers[header] ?? null).toBeNull();
     }
   });
+
+  test("opt-out endpoint reads from KV", async () => {
+    // Seed KV
+    await (env.OPT_OUT_KV as any).put("opt_out:res_123", "some_date");
+
+    const response = await worker.fetch(
+      new Request("https://example.com/api/prospects/res_123/opt-out"),
+      env as Env,
+      createExecutionContext()
+    );
+
+    await expect(response.json()).resolves.toEqual({
+      optedOut: true,
+      prospectId: "res_123",
+    });
+
+    const notOptedOut = await worker.fetch(
+      new Request("https://example.com/api/prospects/res_456/opt-out"),
+      env as Env,
+      createExecutionContext()
+    );
+
+    await expect(notOptedOut.json()).resolves.toEqual({
+      optedOut: false,
+      prospectId: "res_456",
+    });
+  });
+
+  test("reply webhook triggers state transition", async () => {
+    // We must clear prospect_events and restaurants first to avoid constraint errors
+    await env.NEXT_TAG_CACHE_D1.batch([
+      env.NEXT_TAG_CACHE_D1.prepare("DELETE FROM prospect_events"),
+      env.NEXT_TAG_CACHE_D1.prepare("DELETE FROM restaurants"),
+    ]);
+
+    const { getDB } = await import("@/db");
+    const { restaurantsTable } = await import("@/db/schema");
+    const db = getDB();
+    await db.insert(restaurantsTable).values({
+      id: "res_reply_wh",
+      name: "WH Restaurant",
+      behavioralState: 2,
+    }).execute();
+
+    const request = new Request("https://example.com/api/webhooks/reply", {
+      method: "POST",
+      headers: { 
+        "content-type": "application/json",
+        "Authorization": `Bearer test-secret`
+      },
+      body: JSON.stringify({ prospectId: "res_reply_wh" }),
+    });
+
+    const mockEnv = {
+      ...env,
+      REPLY_WEBHOOK_SECRET: "test-secret"
+    };
+
+    const response = await worker.fetch(request, mockEnv as unknown as Env, createExecutionContext());
+    const data = await response.json();
+    
+    expect(response.status).toBe(200);
+    expect((data as any).success).toBe(true);
+    expect((data as any).result.type).toBe("SUCCESS");
+
+    // Verify D1 state is 5
+    const dbRes = await env.NEXT_TAG_CACHE_D1.prepare("SELECT behavioral_state FROM restaurants WHERE id = ?").bind("res_reply_wh").first();
+    expect(dbRes?.behavioral_state).toBe(5);
+  });
 });

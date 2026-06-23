@@ -25,6 +25,9 @@ export default defineConfig({
           NEXT_INC_CACHE_KV: {
             id: "credit-billing-integration-kv",
           },
+          OPT_OUT_KV: {
+            id: "opt-out-integration-kv",
+          },
         },
         queueProducers: {
           SCHEDULER_QUEUE: {
@@ -39,6 +42,8 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
       "@paralleldrive/cuid2": fileURLToPath(new URL("./tests/integration/shims/cuid2.ts", import.meta.url)),
       "server-only": fileURLToPath(new URL("./node_modules/server-only/empty.js", import.meta.url)),
+      "react": fileURLToPath(new URL("./tests/integration/shims/react.ts", import.meta.url)),
+      "next/headers": fileURLToPath(new URL("./tests/integration/shims/next-headers.ts", import.meta.url)),
     },
   },
   test: {
@@ -46,5 +51,10 @@ export default defineConfig({
     reporters: process.env.GITHUB_ACTIONS === "true" ? ["dot", "github-actions"] : ["default"],
     setupFiles: ["./tests/integration/apply-d1-migrations.ts"],
     testTimeout: 15_000,
+    server: {
+      deps: {
+        inline: [/react/],
+      },
+    },
   },
 });

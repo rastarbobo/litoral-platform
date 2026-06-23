@@ -20,6 +20,23 @@ const buildFingerprintFile = resolve(tmpDir, "build-fingerprint.json");
 const baseUrl = process.env.E2E_BASE_URL ?? "http://127.0.0.1:18788";
 const previewPort = new URL(baseUrl).port || "18788";
 const buildCacheVersion = 3;
+
+// Cross-platform package manager resolution.
+// On Windows, spawn("pnpm") with shell:false fails (ENOENT) and
+// pnpm.cmd fails with EINVAL. Use the bare name with shell:true,
+// which lets cmd.exe resolve the .cmd wrapper in PATH.
+const isWindows = process.platform === "win32";
+const pnpmCmd = isWindows ? "pnpm" : "pnpm";
+
+// Arguments with spaces must be wrapped in double-quotes when spawned with
+// shell:true on Windows, otherwise cmd.exe splits them into multiple args.
+function shellArg(value) {
+  if (isWindows && value.includes(" ")) {
+    return `"${value}"`;
+  }
+  return value;
+}
+
 const appTestModeVar = "APP_TEST_MODE";
 const publicBuildEnv = getPublicBuildEnv(process.env);
 const buildInputExactFiles = [
@@ -274,6 +291,7 @@ export function createE2EEnvironment() {
           ...options.env,
         },
         stdio: ["pipe", "pipe", "pipe"],
+        ...(isWindows ? { shell: true } : {}),
       });
 
       runningCommands.add(childProcess);
@@ -398,7 +416,7 @@ export function createE2EEnvironment() {
 
     log("Applying D1 migrations");
     await runCommandAsync(
-      "pnpm",
+      pnpmCmd,
       [
         "wrangler",
         "d1",
@@ -407,14 +425,14 @@ export function createE2EEnvironment() {
         dbName,
         "--local",
         "--persist-to",
-        stateDir,
+        shellArg(stateDir),
       ],
       { input: "yes\n", quiet: true }
     );
 
     log("Seeding D1");
     await runCommandAsync(
-      "pnpm",
+      pnpmCmd,
       [
         "wrangler",
         "d1",
@@ -422,7 +440,7 @@ export function createE2EEnvironment() {
         dbName,
         "--local",
         "--persist-to",
-        stateDir,
+        shellArg(stateDir),
         "--file",
         "./src/db/seed.sql",
       ],
@@ -443,7 +461,7 @@ export function createE2EEnvironment() {
     }
 
     log("Building Vinext preview");
-    await runCommandAsync("pnpm", ["build"], { env: buildEnv, quiet: true });
+    await runCommandAsync(pnpmCmd, ["build"], { env: buildEnv, quiet: true });
     const missingBuildOutputs = getMissingRequiredBuildOutputs();
 
     if (missingBuildOutputs.length > 0) {
@@ -459,25 +477,25 @@ export function createE2EEnvironment() {
   async function startPreview() {
     log(`Starting Wrangler preview at ${baseUrl}`);
     previewProcess = spawn(
-      "pnpm",
+      pnpmCmd,
       [
         "wrangler",
         "dev",
         "--local",
         `--port=${previewPort}`,
-        `--persist-to=${stateDir}`,
+        `--persist-to="${stateDir}"`,
         "--var",
         `${appTestModeVar}:true`,
       ],
       {
         cwd: projectRoot,
-        detached: true,
         env: {
           ...process.env,
           ...runtimeEnv,
           NODE_ENV: "production",
         },
         stdio: ["ignore", "pipe", "pipe"],
+        ...(isWindows ? { shell: true } : {}),
       }
     );
 

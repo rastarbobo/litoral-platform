@@ -1,0 +1,1 @@
+ALTER TABLE `restaurants` ADD `cro_variant` text;

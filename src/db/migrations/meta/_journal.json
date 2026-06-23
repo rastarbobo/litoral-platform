@@ -19,71 +19,190 @@
     {
       "idx": 2,
       "version": "6",
-      "when": 1737313614639,
-      "tag": "0002_add_google_sso",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
       "when": 1737673858119,
       "tag": "0003_add_google_sso",
       "breakpoints": true
     },
     {
-      "idx": 4,
+      "idx": 3,
       "version": "6",
       "when": 1738522913553,
       "tag": "0004_add_passkey_credentials",
       "breakpoints": true
     },
     {
-      "idx": 5,
+      "idx": 4,
       "version": "6",
       "when": 1742847210932,
       "tag": "0005_add_opennext_cache_tables",
       "breakpoints": true
     },
     {
-      "idx": 6,
+      "idx": 5,
       "version": "6",
       "when": 1742857278889,
       "tag": "0006_add_credit_billing_system",
       "breakpoints": true
     },
     {
-      "idx": 7,
+      "idx": 6,
       "version": "6",
       "when": 1743721891587,
       "tag": "0007_add_update_counter_and_payment_intent_id",
       "breakpoints": true
     },
     {
-      "idx": 8,
+      "idx": 7,
       "version": "6",
       "when": 1747391678728,
       "tag": "0008_add_multi_tenancy",
       "breakpoints": true
     },
     {
-      "idx": 9,
+      "idx": 8,
       "version": "6",
       "when": 1775721328978,
       "tag": "0009_add_cms_tables",
       "breakpoints": true
     },
     {
-      "idx": 10,
+      "idx": 9,
       "version": "6",
       "when": 1779873258121,
       "tag": "0010_scheduled_jobs",
       "breakpoints": true
     },
     {
-      "idx": 11,
+      "idx": 10,
       "version": "6",
       "when": 1780080570381,
       "tag": "0011_harden_monthly_credit_refresh",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "6",
+      "when": 1781957066194,
+      "tag": "0012_add_prospects",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "6",
+      "when": 1781958888600,
+      "tag": "0013_add_restaurant_slug",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "6",
+      "when": 1781962871722,
+      "tag": "0014_cro-variant",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "6",
+      "when": 1781965534328,
+      "tag": "0015_add_offer_expires_at",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "6",
+      "when": 1781967747787,
+      "tag": "0016_retargeting_triggers",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "6",
+      "when": 1781972299995,
+      "tag": "0017_brave_talon",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "6",
+      "when": 1781977402029,
+      "tag": "0018_add_onboarding_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1782033711349,
+      "tag": "0019_create_campaigns_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "6",
+      "when": 1782100174018,
+      "tag": "0020_add_brand_persona_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1782100200000,
+      "tag": "0022_add_subscription_status_column",
+      "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "6",
+      "when": 1782100300000,
+      "tag": "0023_add_campaign_engine_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "6",
+      "when": 1782100400000,
+      "tag": "0023_add_stripe_subscription_columns",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "6",
+      "when": 1782100500000,
+      "tag": "0024_add_campaigns_and_locks",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "6",
+      "when": 1782100600000,
+      "tag": "0025_migrate_campaign_pending",
+      "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "6",
+      "when": 1782100700000,
+      "tag": "0026_add_template_forge_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "6",
+      "when": 1782100800000,
+      "tag": "0027_add_campaign_revisions_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "6",
+      "when": 1750598000000,
+      "tag": "0028_add_guardian_mode",
+      "breakpoints": true
+    },
+    {
+      "idx": 28,
+      "version": "6",
+      "when": 1782121487138,
+      "tag": "0029_sync_missing_columns",
       "breakpoints": true
     }
   ]

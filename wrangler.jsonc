@@ -41,7 +41,19 @@
         {
           "binding": "SCHEDULER_QUEUE",
           "queue": "cloudflare-workers-nextjs-saas-template-scheduler"
-        }
+        },
+        {
+          "binding": "ANALYTICS_QUEUE",
+          "queue": "cloudflare-workers-nextjs-saas-template-analytics"
+        },
+        {
+          "binding": "COMPETITOR_ACTIVATED_QUEUE",
+          "queue": "cloudflare-workers-nextjs-saas-template-competitor-activated"
+        },
+        {
+          "binding": "TELEGRAM_UPDATES_QUEUE",
+          "queue": "cloudflare-workers-nextjs-saas-template-telegram-updates"
+        },
       ],
       "consumers": [
         {
@@ -50,6 +62,20 @@
           "max_batch_timeout": 5,
           "max_retries": 5,
           "retry_delay": 60
+        },
+        {
+          "queue": "cloudflare-workers-nextjs-saas-template-analytics",
+          "max_batch_size": 100,
+          "max_batch_timeout": 5,
+          "max_retries": 3,
+          "retry_delay": 30
+        },
+        {
+          "queue": "cloudflare-workers-nextjs-saas-template-telegram-updates",
+          "max_batch_size": 50,
+          "max_batch_timeout": 5,
+          "max_retries": 3,
+          "retry_delay": 30
         }
       ]
     },
@@ -102,6 +128,14 @@
         {
             "binding": "NEXT_INC_CACHE_KV",
             "id": "e922d6e22f4a46b6a92be653e90c6ca1"
+        },
+        {
+            "binding": "OPT_OUT_KV",
+            "id": "opt_out_kv_placeholder"
+        },
+        {
+            "binding": "TELEGRAM_DEDUP_KV",
+            "id": "telegram_dedup_kv_placeholder"
         }
     ],
     "migrations": [
