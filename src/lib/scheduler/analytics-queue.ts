@@ -1,6 +1,6 @@
 import { analyticsRepo } from "@/db/repositories/analytics-repository";
 
-interface AnalyticsQueueMessage {
+export interface AnalyticsQueueMessage {
   prospectId: string;
   eventType: string;
   metadata?: Record<string, unknown>;

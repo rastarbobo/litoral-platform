@@ -46,7 +46,7 @@ export async function resolveRestaurantForUser(): Promise<{
 
     const match = restaurants?.[0];
     if (match) {
-      return { restaurantId: match.id, slug: match.slug };
+      return { restaurantId: match.id, slug: match.slug ?? "" };
     }
   } catch {
     // Schema mismatch — owner_email column may not exist yet. Fall through.
@@ -61,7 +61,7 @@ export async function resolveRestaurantForUser(): Promise<{
         r.name?.toLowerCase().includes(emailDomain),
     );
     if (match) {
-      return { restaurantId: match.id, slug: match.slug };
+      return { restaurantId: match.id, slug: match.slug ?? "" };
     }
   } catch {
     // Silent fallback — just means no restaurant linked

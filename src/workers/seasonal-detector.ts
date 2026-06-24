@@ -38,7 +38,7 @@ export async function scheduled(
 
 // Cloudflare Worker entry point — not imported by any other module.
 // eslint-disable-next-line project/no-unused-module-exports
-export async function fetch(request: Request): Promise<Response> {
+export async function handleRequest(request: Request): Promise<Response> {
   // Only allow POST from local/dev environment for manual triggers
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });

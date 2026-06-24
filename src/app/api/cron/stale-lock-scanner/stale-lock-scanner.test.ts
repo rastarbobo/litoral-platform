@@ -50,7 +50,7 @@ describe("Story 6.2: Stale Lock Scanner", () => {
 
   // 10.12: Stale lock scanner reverts campaigns with claimed_at > 20 min
   it("10.12: reverts campaigns claimed > 20 minutes ago", async () => {
-    void new Date(Date.now() - 30 * 60 * 1000); // thirtyMinutesAgo
+    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
     mockDB.query.campaignsTable.findMany = vi.fn().mockResolvedValue([
       { id: "camp_stale", claimedAt: thirtyMinutesAgo, claimedBy: "test-restaurant" },
     ]);

@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
   try {
     // Story 7.5: Check for hibernate mode before computing results
     const db = getDB();
-    const { data: statusRows } = await db
+    const statusRows = await db
       .select({
         subscriptionStatus: restaurantsTable.subscriptionStatus,
         operationalMode: restaurantsTable.operationalMode,

@@ -139,8 +139,8 @@ export const useDashboardStore = create<DashboardStore>((set, get) => ({
         const live = get().campaigns;
         const campaign = live[from]?.find((c) => c.id === campaignId);
         if (campaign) {
-          const updatedFrom = live[from].filter((c) => c.id !== campaignId);
-          const updatedTo = [campaign, ...live[to]];
+          const updatedFrom = live[from]?.filter((c) => c.id !== campaignId) ?? [];
+          const updatedTo = [campaign, ...(live[to] ?? [])];
           set({
             campaigns: {
               ...live,

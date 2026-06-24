@@ -201,7 +201,7 @@ export function CampaignActionBar({
       <RejectButtonGroup
         campaignId={campaignId}
         restaurantId={restaurantId}
-        isBusy={isBusy}
+        isRejectInFlight={isBusy}
       />
     </div>
   );
@@ -212,7 +212,7 @@ export function CampaignActionBar({
 function RejectButtonGroup({
   campaignId,
   restaurantId,
-  isBusy,
+  isRejectInFlight,
 }: {
   campaignId: string;
   restaurantId: string;
@@ -239,7 +239,7 @@ function RejectButtonGroup({
       <button
         type="button"
         onClick={() => setShowPicker(true)}
-        disabled={isBusy}
+        disabled={isRejectInFlight}
         className="w-full py-3 px-4 rounded-xl bg-transparent text-[#ba1a1a]
                    text-[17px] font-medium active:bg-[#ffdad6] touch-manipulation
                    min-h-[44px] disabled:opacity-50 transition-colors
@@ -271,7 +271,7 @@ function RejectButtonGroup({
           key={r.value}
           type="button"
           onClick={() => handleReject(r.value)}
-          disabled={isBusy}
+          disabled={isRejectInFlight}
           className="w-full text-left py-3 px-4 rounded-xl border border-[#E5E5E7] bg-white
                      text-[15px] text-[#1a1b1f] font-medium active:bg-[#f4f3f8]
                      touch-manipulation min-h-[44px] disabled:opacity-50 transition-colors"
@@ -283,7 +283,7 @@ function RejectButtonGroup({
       <button
         type="button"
         onClick={() => setShowPicker(false)}
-        disabled={isBusy}
+        disabled={isRejectInFlight}
         className="py-2.5 px-4 rounded-xl text-[15px] font-medium text-[#717786]
                    active:text-[#1a1b1f] touch-manipulation min-h-[44px]"
         style={{ fontFamily: "Inter, sans-serif" }}

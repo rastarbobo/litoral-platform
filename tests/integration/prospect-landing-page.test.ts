@@ -62,7 +62,7 @@ describe("Prospect Landing Page Integration Tests", () => {
   describe("createProspect landing page record", () => {
     it("creates a prospect with slug auto-generated from name", async () => {
       const db = getDB();
-      const prospect = await restaurantRepo.createProspect({
+      const prospect = await (restaurantRepo as any).createProspect({
         id: "rest_test123",
         name: "La Marina Bistro",
         slug: null,
@@ -81,10 +81,10 @@ describe("Prospect Landing Page Integration Tests", () => {
     it("computes a non-zero composite score from multiple signals", async () => {
       const db = getDB();
       await db.insert(environmentalSignalsTable).values([
-        { restaurantId: "rest_envscore", signalType: "weather", signalValue: "sunny", weight: 1.0, confidence: 0.9 },
+        { restaurantId: "rest_envscore", signalType: "weather", signalValue: "sunny", weight: 1.0, confidence: 0.9, date: "2026-01-01", cityName: "test" } as any,
       ]);
 
-      const score = await restaurantRepo.getEnvironmentalSignalScore("rest_envscore");
+      const score = await (restaurantRepo as any).getEnvironmentalSignalScore("rest_envscore");
       expect(score).toBeGreaterThan(0);
     });
   });

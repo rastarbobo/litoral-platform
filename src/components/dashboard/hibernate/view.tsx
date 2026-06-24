@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { ShieldCheck, Image, FileText, Link, RefreshCw } from "lucide-react";
+import { ShieldCheck, ImageIcon, FileText, Link, RefreshCw } from "lucide-react";
 
 /**
  * Hibernate View — Story 7.5 (Task 3.1)
@@ -117,7 +117,7 @@ export function HibernateView({
 
               {/* R2 Assets */}
               <div className="flex items-center gap-2">
-                <Image className="w-4 h-4 text-[#717786] flex-shrink-0" alt="" />
+                <ImageIcon className="w-4 h-4 text-[#717786] flex-shrink-0" />
                 <span
                   className="text-[15px] text-[#414755]"
                   style={{ fontFamily: "Inter, sans-serif" }}

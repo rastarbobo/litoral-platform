@@ -6,6 +6,8 @@
  *
  * @see https://github.com/vinext/vinext/blob/main/packages/vinext/src/server/app-router-entry.ts
  */
+import { AnalyticsQueueMessage } from "./src/lib/scheduler/analytics-queue";
+import { ScheduledQueueMessage } from "./src/lib/scheduler/jobs";
 import handler from "vinext/server/app-router-entry";
 import {
   DEFAULT_DEVICE_SIZES,
@@ -115,7 +117,7 @@ async function handleCustomEdge(
       }
 
       const { processCompetitorSignup } = await import("./src/lib/scheduler/retargeting-scheduler");
-      const processedCount = await processCompetitorSignup(__env, body.competitorId);
+      const processedCount = await processCompetitorSignup(__env as unknown as Record<string, unknown>, body.competitorId);
       
       return Response.json({ success: true, processedCount });
     } catch (error) {
@@ -207,14 +209,14 @@ async function handleCustomEdge(
     async queue(batch: MessageBatch<unknown>, __env: Env, __ctx: ExecutionContext): Promise<void> {
       if (batch.queue === "cloudflare-workers-nextjs-saas-template-analytics") {
         const { handleAnalyticsQueue } = await import("./src/lib/scheduler/analytics-queue");
-        await handleAnalyticsQueue(batch);
+        await handleAnalyticsQueue(batch as MessageBatch<AnalyticsQueueMessage>);
       } else if (batch.queue === "cloudflare-workers-nextjs-saas-template-competitor-activated") {
         for (const message of batch.messages) {
           try {
-            const body = JSON.parse(message.body) as { restaurantId?: string };
+            const body = JSON.parse(message.body as string) as { restaurantId?: string };
             if (body.restaurantId) {
               const { processCompetitorSignup } = await import("./src/lib/scheduler/retargeting-scheduler");
-              await processCompetitorSignup(__env, body.restaurantId);
+              await processCompetitorSignup(__env as unknown as Record<string, unknown>, body.restaurantId);
             }
             message.ack();
           } catch (err) {
@@ -223,7 +225,7 @@ async function handleCustomEdge(
           }
         }
       } else {
-        await handleSchedulerQueue(batch);
+        await handleSchedulerQueue(batch as MessageBatch<ScheduledQueueMessage>);
       }
     },
   } satisfies ExportedHandler<Env, unknown>;

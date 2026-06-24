@@ -1045,7 +1045,7 @@ class RestaurantRepository {
         .update(restaurantsTable)
         .set({
           subscriptionStatus: "active_saas",
-          subscriptionTier: tier,
+          subscriptionTier: tier as "starter" | "pro" | "annual_pro" | null,
           stripeCustomerId,
           stripeSubscriptionId,
         })
@@ -1102,7 +1102,7 @@ class RestaurantRepository {
       tier: restaurant.subscriptionTier ?? null,
       status: restaurant.subscriptionStatus ?? "prospect",
       stripeSubscriptionId: restaurant.stripeSubscriptionId ?? null,
-      currentPeriodEnd: restaurant.subscriptionCurrentPeriodEnd ?? null,
+      currentPeriodEnd: restaurant.subscriptionCurrentPeriodEnd ? Number(restaurant.subscriptionCurrentPeriodEnd) : null,
     };
   }
 
@@ -1297,7 +1297,7 @@ class RestaurantRepository {
 
     // Race won: we were first to write — return our token
     if (result && result.length > 0) {
-      return { token: result[0].extensionAuthToken };
+      return { token: result[0].extensionAuthToken ?? "" };
     }
 
     // No row updated — token already exists or restaurant not found
@@ -1798,7 +1798,7 @@ class RestaurantRepository {
       campaignsGenerated,
       lastCampaignAt:
         lastCampaign && lastCampaign.length > 0 && lastCampaign[0].createdAt
-          ? new Date(lastCampaign[0].createdAt as number).toISOString()
+          ? new Date(lastCampaign[0].createdAt as unknown as number).toISOString()
           : null,
       r2AssetCount: restaurant?.[0]?.r2AssetCount as number ?? 0,
       r2TotalSizeBytes: restaurant?.[0]?.r2TotalSizeBytes as number ?? 0,

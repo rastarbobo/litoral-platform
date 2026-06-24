@@ -3,6 +3,7 @@ import { getSessionFromCookie } from "@/utils/auth";
 import { resolveRestaurantForUser } from "@/lib/dashboard/user-restaurant";
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
 import { getStripe } from "@/lib/stripe";
+import Stripe from "stripe";
 
 /**
  * Stripe Price ID to Subscription Item ID mapping for tier upgrades.

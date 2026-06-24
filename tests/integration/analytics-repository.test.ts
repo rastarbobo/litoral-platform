@@ -1,19 +1,19 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { analyticsRepo } from "@/db/repositories/analytics-repository";
-import { getDb } from "@/db";
+import { getDB } from "@/db";
 import { analyticsEventsTable, prospectEventsTable, restaurantsTable } from "@/db/schema";
 import { createId } from "@paralleldrive/cuid2";
 
 describe("Analytics Repository Integration", () => {
   beforeEach(async () => {
-    const db = getDb();
+    const db = getDB();
     await db.delete(analyticsEventsTable);
     await db.delete(prospectEventsTable);
     await db.delete(restaurantsTable);
   });
 
   it("should record an analytics event correctly", async () => {
-    const db = getDb();
+    const db = getDB();
     
     // Setup a prospect
     const prospectId = `rest_${createId()}`;
@@ -32,7 +32,7 @@ describe("Analytics Repository Integration", () => {
   });
 
   it("should generate a weekly cohort report highlighting the weakest tier", async () => {
-    const db = getDb();
+    const db = getDB();
     
     // Setup a prospect
     const prospectId = `rest_${createId()}`;

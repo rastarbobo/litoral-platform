@@ -11,7 +11,7 @@ import {
  * Check if restaurant's email is verified before passing to Stripe.
  * Prevents Stripe Customer creation with unverified emails.
  */
-function getVerifiedEmail(session: { user?: { email?: string; emailVerified?: Date | null } }): string | null {
+function getVerifiedEmail(session: { user?: { email?: string | null; emailVerified?: Date | null } | undefined }): string | null {
   if (!session.user?.emailVerified) {
     return null;
   }

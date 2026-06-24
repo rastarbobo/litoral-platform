@@ -166,9 +166,9 @@ export function ResultsView({ data }: { data?: ResultsData | null }) {
 function SeasonComparisonCard({
   seasonComparison,
 }: {
-  seasonComparison: NonNullable<ResultsData["seasonComparison"]>;
+  seasonComparison: ResultsData["seasonComparison"];
 }) {
-  if (seasonComparison === null) {
+  if (seasonComparison === null || seasonComparison === undefined) {
     return (
       <Level1Card>
         <div className="flex items-center gap-2 mb-2">

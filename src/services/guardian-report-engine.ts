@@ -16,6 +16,8 @@ import {
 } from "@/db/schema";
 import type {
   GuardianReportData,
+} from "@/lib/dashboard/types";
+import type {
   SeoGuardianConfig,
 } from "@/db/schema";
 import { reviewResponsesRepo } from "@/db/repositories/review-responses-repository";
@@ -69,7 +71,7 @@ async function generateMonthlyGuardianReport(
   // 2. Date range: last 30 days (monthly report window)
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  const guardianSince = new Date(restaurant.guardianModeSince as number);
+  const guardianSince = restaurant.guardianModeSince ? new Date(restaurant.guardianModeSince) : new Date();
 
   // Use the later of 30 days ago or guardian mode start
   const reportStart = guardianSince > thirtyDaysAgo ? guardianSince : thirtyDaysAgo;

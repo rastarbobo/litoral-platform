@@ -233,7 +233,7 @@ describe("Stripe Subscription Integration", () => {
       const response = await POST(request as unknown as Parameters<typeof POST>[0]);
       expect(response.status).toBe(400);
 
-      const body = await response.json();
+      const body = await response.json() as { status?: string };
       expect(body.status).toBe("error");
     });
 
@@ -286,7 +286,7 @@ describe("Stripe Subscription Integration", () => {
       const response = await POST(request as unknown as Parameters<typeof POST>[0]);
       expect(response.status).toBe(200);
 
-      const body = await response.json();
+      const body = await response.json() as { received?: boolean };
       expect(body.received).toBe(true);
     });
   });

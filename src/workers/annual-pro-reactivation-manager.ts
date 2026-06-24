@@ -29,7 +29,7 @@ export async function scheduled(
 
 // Cloudflare Worker entry point — consumed by the runtime, not imported.
 // eslint-disable-next-line project/no-unused-module-exports
-export async function fetch(request: Request): Promise<Response> {
+export async function handleRequest(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }

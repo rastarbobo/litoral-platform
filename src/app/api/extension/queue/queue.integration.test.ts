@@ -26,7 +26,7 @@ const mockDB: Record<string, unknown> & { query: { restaurantsTable: { findFirst
   },
 };
 
-function createRequest(method: string, url: string, body?: object): Request {
+function createRequest(method: string, url: string, body?: object): any {
   const init: RequestInit = { method };
   if (body) {
     init.body = JSON.stringify(body);
@@ -35,7 +35,7 @@ function createRequest(method: string, url: string, body?: object): Request {
   return new Request(url, init);
 }
 
-// ─── Tests: Story 6.2 — API Integration ────────────────────
+// ─── Tests: Story 6.2 ── API Integration ────────────────────
 
 describe("Story 6.2: Extension API Integration Tests", () => {
   beforeEach(() => {
@@ -63,7 +63,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         campaignId: "camp_test",
       });
       req1.headers.set("Authorization", "Bearer valid-token");
-      const res1 = await claimPost(req1 as unknown as Request);
+      const res1 = await claimPost(req1);
       const json1 = await res1.json();
       expect(json1).toEqual({ status: "success", data: { claimed: true } });
 
@@ -71,7 +71,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         campaignId: "camp_test",
       });
       req2.headers.set("Authorization", "Bearer valid-token");
-      const res2 = await claimPost(req2 as unknown as Request);
+      const res2 = await claimPost(req2);
       const json2 = await res2.json();
       expect(json2).toEqual({ status: "success", data: { claimed: false } });
     });
@@ -81,9 +81,9 @@ describe("Story 6.2: Extension API Integration Tests", () => {
       const reqNoAuth = createRequest("POST", "http://localhost/api/extension/queue/claim", {
         campaignId: "camp_test",
       });
-      const resNoAuth = await claimPost(reqNoAuth as unknown as Request);
+      const resNoAuth = await claimPost(reqNoAuth);
       expect(resNoAuth.status).toBe(401);
-      const jsonNoAuth = await resNoAuth.json();
+      const jsonNoAuth = (await resNoAuth.json()) as { status: string };
       expect(jsonNoAuth.status).toBe("error");
 
       // Missing campaignId
@@ -93,9 +93,9 @@ describe("Story 6.2: Extension API Integration Tests", () => {
       });
       const reqNoCampaign = createRequest("POST", "http://localhost/api/extension/queue/claim", {});
       reqNoCampaign.headers.set("Authorization", "Bearer valid-token");
-      const resNoCampaign = await claimPost(reqNoCampaign as unknown as Request);
+      const resNoCampaign = await claimPost(reqNoCampaign);
       expect(resNoCampaign.status).toBe(400);
-      const jsonNoCampaign = await resNoCampaign.json();
+      const jsonNoCampaign = (await resNoCampaign.json()) as { status: string };
       expect(jsonNoCampaign.status).toBe("fail");
     });
   });
@@ -115,7 +115,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         scheduledAt: "2026-06-21T14:00:00.000Z",
       });
       req.headers.set("Authorization", "Bearer valid-token");
-      const res = await scheduledPost(req as unknown as Request);
+      const res = await scheduledPost(req);
       const json = await res.json();
 
       expect(json).toEqual({ status: "success", data: { scheduled: true } });
@@ -132,7 +132,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         scheduledAt: "not-a-date",
       });
       req.headers.set("Authorization", "Bearer valid-token");
-      const res = await scheduledPost(req as unknown as Request);
+      const res = await scheduledPost(req);
       expect(res.status).toBe(400);
     });
   });

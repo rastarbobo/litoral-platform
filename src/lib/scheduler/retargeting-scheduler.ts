@@ -34,7 +34,7 @@ export async function processSeasonProximityTriggers(env: Record<string, unknown
       await restaurantRepo.logRetargetingEvent(prospect.id, "retarget_season");
 
       if (env.N8N_WEBHOOK_RETARGETING_URL) {
-        const response = await fetch(env.N8N_WEBHOOK_RETARGETING_URL, {
+        const response = await fetch(env.N8N_WEBHOOK_RETARGETING_URL as string, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -95,7 +95,7 @@ export async function processCompetitorSignup(env: Record<string, unknown>, comp
       await restaurantRepo.logRetargetingEvent(prospect.id, "retarget_competitor");
 
       if (env.N8N_WEBHOOK_RETARGETING_URL) {
-        const response = await fetch(env.N8N_WEBHOOK_RETARGETING_URL, {
+        const response = await fetch(env.N8N_WEBHOOK_RETARGETING_URL as string, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({

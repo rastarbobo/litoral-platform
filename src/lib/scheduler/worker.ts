@@ -33,7 +33,7 @@ export async function handleSchedulerCron({
     dispatchScheduledJobsToQueue({ queue, now }),
     dispatchDueCreditExpirationJobs({ queue, now }),
     dispatchDueCreditRefreshJobs({ queue, now }),
-    processSeasonProximityTriggers(env, now),
+    processSeasonProximityTriggers(env as unknown as Record<string, unknown>, now),
     (async () => {
       // Run weekly report on Sundays. Idempotency via KV to prevent duplicate runs
       // if the cron fires multiple times or is delayed into a later window.

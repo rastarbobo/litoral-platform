@@ -70,8 +70,9 @@ export function DemoSection({ imageUrl, caption, restaurantName }: { imageUrl: s
     <Card>
       <h2 className="text-[22px] font-semibold leading-[28px] text-[#1a1b1f] mb-4">Generated Media Preview</h2>
       <div className="rounded-[8px] overflow-hidden shadow-inner border border-[#E5E5E7] mb-3">
-        <img 
-          src={imageUrl} 
+        {/* oxlint-disable-next-line next/no-img-element -- next/image not available in prospect preview */}
+        <img
+          src={imageUrl}
           alt={`Enhanced photo for ${escapeHtml(restaurantName)}`}
           className="w-full h-auto object-cover block"
           loading="eager"

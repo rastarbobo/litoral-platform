@@ -33,7 +33,7 @@ export function SubscriptionCheckoutWrapper({
         });
 
         if (!enrollRes.ok && enrollRes.status === 409) {
-          const body = await enrollRes.json();
+          const body = (await enrollRes.json()) as { message?: string };
           setScarcityError(
             body.message ?? "One Per Town limit reached for this area.",
           );
@@ -49,7 +49,7 @@ export function SubscriptionCheckoutWrapper({
         });
 
         if (!sessionRes.ok) {
-          const body = await sessionRes.json();
+          const body = (await sessionRes.json()) as { message?: string };
           setScarcityError(
             body.message ?? "Failed to create checkout session. Please try again.",
           );
@@ -57,7 +57,7 @@ export function SubscriptionCheckoutWrapper({
           return;
         }
 
-        const { data } = await sessionRes.json();
+        const { data } = (await sessionRes.json()) as { data?: { url?: string } };
 
         // Step 3: Redirect to Stripe Checkout
         if (data?.url) {

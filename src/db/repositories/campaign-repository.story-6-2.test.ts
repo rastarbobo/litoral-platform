@@ -59,7 +59,7 @@ function createMockDB(overrides: Record<string, unknown> = {}) {
 // ─── Tests: Story 6.2 — Database-layer pending_schedule Lock ─────
 
 describe("Story 6.2: Extension Publishing Lock", () => {
-  let mockDB: Record<string, unknown>;
+  let mockDB: any;
 
   beforeEach(() => {
     mockDB = createMockDB();

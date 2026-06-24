@@ -53,7 +53,7 @@ function generateToken(): string {
  * Get the TTL in hours from environment variable or default.
  */
 function getTtlHours(): number {
-  const envTtl = workerEnv.ONBOARDING_MAGIC_LINK_TTL_HOURS;
+  const envTtl = (workerEnv as unknown as Record<string, unknown>).ONBOARDING_MAGIC_LINK_TTL_HOURS as string | undefined;
   if (envTtl) {
     const parsed = parseInt(envTtl, 10);
     if (!isNaN(parsed) && parsed > 0) return parsed;
@@ -65,7 +65,7 @@ function getTtlHours(): number {
  * Build the full onboarding URL for a token.
  */
 function buildOnboardingUrl(token: string): string {
-  const baseUrl = workerEnv.NEXT_PUBLIC_APP_URL ?? "https://litoral.agency";
+  const baseUrl = ((workerEnv as unknown as Record<string, unknown>).NEXT_PUBLIC_APP_URL as string | undefined) ?? "https://litoral.agency";
   return `${baseUrl}/onboarding/${token}`;
 }
 

@@ -292,7 +292,7 @@ describe('Story 4.1: Autonomous Daily Campaign Generation', () => {
 
     it('should select a valid template for each campaign type', () => {
       const __types = Object.keys(templateMap);
-      for (const type of types) {
+      for (const type of __types) {
         const templates = templateMap[type];
         const selected = templates[Math.floor(Math.random() * templates.length)];
         expect(templates).toContain(selected);

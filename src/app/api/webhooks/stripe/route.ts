@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
   // 2. Deduplication via KV
   const dedupeKey = `stripe_event:${event.id}`;
   const { env } = await getCloudflareContext();
-  const stripeKV = env.STRIPE_KV as KVNamespace | undefined;
+  const stripeKV = (env as unknown as Record<string, unknown>).STRIPE_KV as KVNamespace | undefined;
 
   // Check if already processed
   if (stripeKV) {

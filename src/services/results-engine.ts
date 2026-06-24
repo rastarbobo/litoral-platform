@@ -324,7 +324,7 @@ export async function getGuardianMode(restaurantId: string): Promise<ResultsData
     enabled: true,
     mode: "local_seo_guardian",
     since: restaurant.guardianModeSince
-      ? new Date(restaurant.guardianModeSince as number).toISOString()
+      ? new Date(restaurant.guardianModeSince).toISOString()
       : null,
     postsThisWeek,
     postsTarget: config.postsPerWeek ?? 2,

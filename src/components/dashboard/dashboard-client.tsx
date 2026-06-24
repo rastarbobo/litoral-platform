@@ -164,9 +164,9 @@ async function fetchDashboardData(
       setResults(data ?? null);
 
       // Story 7.5: Check for hibernate mode in API response
-      if ((data as Record<string, unknown> & { mode?: string })?.["mode"] === "hibernate") {
+      if ((data as unknown as Record<string, unknown> & { mode?: string })?.["mode"] === "hibernate") {
         setIsHibernate?.(true);
-        const eligibility = (data as Record<string, unknown> & {
+        const eligibility = (data as unknown as Record<string, unknown> & {
           reactivationEligibility?: ReactivationEligibilityData;
         })?.["reactivationEligibility"];
         setHibernateEligibility?.(eligibility ?? null);

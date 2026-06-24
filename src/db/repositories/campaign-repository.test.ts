@@ -66,7 +66,7 @@ function createMockDB(overrides: Record<string, unknown> = {}) {
 // ─── Tests ─────────────────────────────────────────────────
 
 describe("CampaignRepository - Revision Operations (Story 5.2)", () => {
-  let mockDB: Record<string, unknown>;
+  let mockDB: any;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -207,7 +207,7 @@ describe("CampaignRepository - Revision Operations (Story 5.2)", () => {
 });
 
 describe("CampaignRepository - Status Guard (Story 5.2 AC 8)", () => {
-  let mockDB: Record<string, unknown>;
+  let mockDB: any;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -256,7 +256,7 @@ describe("CampaignRepository - Status Guard (Story 5.2 AC 8)", () => {
 });
 
 describe("CampaignRepository - revisionCount single-increment contract (Patch CR-5.2-2)", () => {
-  let mockDB: Record<string, unknown>;
+  let mockDB: any;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -335,7 +335,7 @@ describe("CampaignRepository - revisionCount single-increment contract (Patch CR
 });
 
 describe("CampaignRepository - listAllApprovedOlderThan (Story 6.5)", () => {
-  let mockDB: Record<string, unknown>;
+  let mockDB: any;
 
   beforeEach(() => {
     mockDB = createMockDB();

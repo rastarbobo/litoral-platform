@@ -249,7 +249,7 @@ describe("TelegramMessageSchema media extraction logic", () => {
   });
 
   test("photo sizes have ascending dimensions", () => {
-    const msg = buildPhotoUpdate().message;
+    const msg = (buildPhotoUpdate().message ?? null) as { photo?: { width: number; height: number }[] } | null;
     if (msg?.photo && msg.photo.length >= 2) {
       const totalPixels = (p: { width: number; height: number }) => p.width * p.height;
       expect(totalPixels(msg.photo[0])).toBeLessThan(totalPixels(msg.photo[1]));

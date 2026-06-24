@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 /** Map internal subscription status to human-readable label */
-function formatStatusLabel(status: string | null): string {
+function formatStatusLabel(status: string | null | undefined): string {
   switch (status) {
     case "active_saas":
     case "active":

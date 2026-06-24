@@ -3,7 +3,7 @@ import { campaignRepo } from "@/db/repositories/campaign-repository";
 import { validateDashboardApiAuth } from "@/lib/dashboard/api-auth";
 import { CAMPAIGN_STATUS } from "@/db/schema";
 
-const VALID_STATUSES = new Set(Object.values(CAMPAIGN_STATUS));
+const VALID_STATUSES = new Set<string>(Object.values(CAMPAIGN_STATUS));
 
 /**
  * PATCH /api/dashboard/campaigns/[campaignId]/status
@@ -34,22 +34,22 @@ export async function PATCH(
   let newStatus: string;
   try {
     const body = (await req.json()) as { status?: string };
-    newStatus = body.status ?? "";
+    const rawStatus = body.status ?? "";
+    if (!VALID_STATUSES.has(rawStatus)) {
+      return NextResponse.json(
+        {
+          status: "error",
+          message: `Invalid status: ${rawStatus}. Valid: ${[...VALID_STATUSES].join(", ")}`,
+        },
+        { status: 400 },
+      );
+    }
+    newStatus = rawStatus;
   } catch {
     return NextResponse.json(
       { status: "error", message: "Invalid JSON body" },
       { status: 400 },
-    );
-  }
-
-  if (!VALID_STATUSES.has(newStatus)) {
-    return NextResponse.json(
-      {
-        status: "error",
-        message: `Invalid status: ${newStatus}. Valid: ${[...VALID_STATUSES].join(", ")}`,
-      },
-      { status: 400 },
-    );
+  ) 
   }
 
   // 3. Verify ownership

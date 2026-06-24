@@ -1,6 +1,6 @@
 "use server-only";
 
-import { eq, and, desc, asc, sql, isNotNull, lte } from "drizzle-orm";
+import { eq, and, desc, asc, sql, isNotNull, lte, SQL } from "drizzle-orm";
 import { createId } from "@paralleldrive/cuid2";
 import { getDB } from "@/db";
 import { campaignsTable, restaurantsTable, campaignRevisionsTable, analyticsEventsTable, type Campaign, type CampaignRevision } from "@/db/schema";
@@ -108,16 +108,17 @@ class CampaignRepository {
 
     const sortOrder =
       options?.sort === "created_at_asc"
-        ? (table: typeof campaignsTable) => [asc(table.createdAt)]
-        : // default: newest first
-          (table: typeof campaignsTable) => [desc(table.createdAt)];
+        ? () => [asc(campaignsTable.createdAt)]
+        : () => [desc(campaignsTable.createdAt)];
+    const typedSortOrder = sortOrder as unknown as (fields: NonNullable<unknown>, operators: { asc: typeof asc; desc: typeof desc }) => SQL<unknown>[];
+
 
     const { data, error } = await tryCatch(
       db.query.campaignsTable.findMany({
         where: conditions.length > 1 ? and(...conditions) : conditions[0],
         limit: options?.limit ?? 50,
         offset: options?.offset ?? 0,
-        orderBy: sortOrder,
+        orderBy: typedSortOrder,
       }),
     );
 

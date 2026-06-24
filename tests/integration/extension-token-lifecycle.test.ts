@@ -239,7 +239,7 @@ describe("Extension Token Generation & Clear Integration", () => {
       // Look up by token — should return TEST_RESTAURANT, not TEST_PROSPECT
       const db = getDB();
       const found = await db.query.restaurantsTable.findFirst({
-        where: eq(restaurantsTable.extensionAuthToken, tokenA),
+        where: eq(restaurantsTable.extensionAuthToken, tokenA ?? ""),
       });
 
       expect(found).not.toBeNull();

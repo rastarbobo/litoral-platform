@@ -63,7 +63,7 @@ export function PreFilledOnboardingForm({
         }),
       });
 
-      const body = await res.json();
+      const body = (await res.json()) as { status?: string; message?: string; data?: { nextStep?: string } };
 
       if (!res.ok || body.status === "error") {
         setServerError(body.message ?? "Something went wrong. Please try again.");

@@ -253,7 +253,7 @@ describe("Webhook Processing Integration", () => {
         text: "Create a flash sale campaign!",
       };
 
-      const hasPhoto = !!msg.photo;
+      const hasPhoto = !!((msg as Record<string, unknown>).photo);
       const hasVoice = !!(msg as Record<string, unknown>).voice;
       const hasVideo = !!(msg as Record<string, unknown>).video;
 

@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
     const { env } = await getCloudflareContext();
     const { processCompetitorSignup } = await import("@/lib/scheduler/retargeting-scheduler");
 
-    const processedCount = await processCompetitorSignup(env, body.restaurantId);
+    const processedCount = await processCompetitorSignup(env as unknown as Record<string, unknown>, body.restaurantId);
 
     if (processedCount < 0) {
       return NextResponse.json(

@@ -41,7 +41,7 @@ export async function validateDashboardApiAuth(
   const contentType = req.headers.get("Content-Type") ?? "";
   if (contentType.includes("application/json")) {
     try {
-      const body = await req.clone().json().catch(() => ({}));
+      const body = (await req.clone().json().catch(() => ({}))) as { restaurantId?: string; token?: string };
       restaurantId = body.restaurantId ?? null;
       token = body.token ?? null;
     } catch {

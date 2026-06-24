@@ -24,20 +24,20 @@ async function suspendR2Access(restaurantId: string): Promise<boolean> {
 
   const result = await restaurantRepo.suspendR2Access(restaurantId);
 
-  if ("type" in result && result.type === "DATABASE_ERROR") {
+  if ("type" in result) {
     console.error("AssetSuspension: failed to suspend R2 access", {
       restaurantId,
-      message: result.message,
+      message: (result as { message?: string }).message,
     });
     return false;
   }
 
   console.info("AssetSuspension: R2 access suspended", {
     restaurantId,
-    success: result.success,
+    success: (result as { success?: boolean }).success,
   });
 
-  return result.success;
+  return (result as { success?: boolean }).success ?? false;
 }
 
 /**
@@ -54,20 +54,20 @@ export async function restoreR2Access(restaurantId: string): Promise<string | nu
 
   const result = await restaurantRepo.restoreR2Access(restaurantId);
 
-  if ("type" in result && result.type === "DATABASE_ERROR") {
+  if ("type" in result) {
     console.error("AssetSuspension: failed to restore R2 access", {
       restaurantId,
-      message: result.message,
+      message: (result as { message?: string }).message,
     });
     return null;
   }
 
   console.info("AssetSuspension: R2 access restored", {
     restaurantId,
-    tokenPrefix: result.token.substring(0, 8),
+    tokenPrefix: (result as { token?: string }).token?.substring(0, 8),
   });
 
-  return result.token;
+  return (result as { token?: string }).token ?? null;
 }
 
 /**

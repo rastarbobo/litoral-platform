@@ -63,8 +63,8 @@ export async function POST(req: NextRequest) {
 async function handleTokenClear(restaurantId: string) {
   const result = await restaurantRepo.clearExtensionAuthToken(restaurantId);
 
-  if (result.type === "DATABASE_ERROR") {
-    console.error("Extension token clear: DB error", { restaurantId, error: result.message });
+  if ((result as { type?: string }).type === "DATABASE_ERROR") {
+    console.error("Extension token clear: DB error", { restaurantId, error: (result as { message?: string }).message });
     return NextResponse.json(
       { status: "error", message: "Failed to clear extension token. Please try again." },
       { status: 500 },

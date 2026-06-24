@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
   try {
     // 1. Verify restaurant is in hibernate
     const db = getDB();
-    const { data: rows } = await db
+    const rows = await db
       .select({
         subscriptionStatus: restaurantsTable.subscriptionStatus,
         operationalMode: restaurantsTable.operationalMode,
