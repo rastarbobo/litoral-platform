@@ -17,22 +17,20 @@ import { tryCatch } from "@/lib/try-catch";
 
 // ─── Worker Entry Point ──────────────────────────────────
 
-/**
- * Scheduled handler — runs on the 1st of each month at 06:00 UTC.
- */
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function scheduled(
   _event: ScheduledEvent,
   env: { TELEGRAM_BOT_TOKEN?: string },
-  _ctx: ExecutionContext,
+  __ctx: ExecutionContext,
 ): Promise<void> {
   console.info("Guardian Report Generator: starting monthly report generation");
   await generateAllReports(env);
   console.info("Guardian Report Generator: monthly report generation complete");
 }
 
-/**
- * HTTP handler — allows manual trigger via POST request.
- */
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function fetch(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });

@@ -1,11 +1,11 @@
-import { eq, sql, desc, gte, and, type SQL } from "drizzle-orm";
+import { eq, sql, gte, and } from "drizzle-orm";
 import { getDB } from "@/db";
-import { analyticsEventsTable, restaurantsTable, prospectEventsTable } from "@/db/schema";
+import { analyticsEventsTable, prospectEventsTable } from "@/db/schema";
 import type { AnalyticsEvent } from "@/db/schema";
 
-export type MetricTier = 'Revenue' | 'Conversion' | 'Engagement' | 'System Health';
+type MetricTier = 'Revenue' | 'Conversion' | 'Engagement' | 'System Health';
 
-export interface CohortReport {
+interface CohortReport {
   startDate: string;
   endDate: string;
   metrics: {
@@ -24,7 +24,7 @@ export class AnalyticsRepository {
   async recordEvent(
     prospectId: string,
     eventType: string,
-    metadata?: Record<string, any>
+    metadata?: Record<string, unknown>
   ): Promise<{ data?: AnalyticsEvent; error?: string }> {
     try {
       const db = getDB();
@@ -37,9 +37,9 @@ export class AnalyticsRepository {
         .returning();
       
       return { data: inserted };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to record analytics event", err);
-      return { error: err.message };
+      return { error: err instanceof Error ? err.message : "Unknown error" };
     }
   }
 
@@ -140,9 +140,9 @@ export class AnalyticsRepository {
           }
         }
       };
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Failed to generate weekly cohort report", err);
-      return { error: err.message };
+      return { error: err instanceof Error ? err.message : "Unknown error" };
     }
   }
 }

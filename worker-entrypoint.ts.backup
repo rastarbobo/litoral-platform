@@ -93,7 +93,6 @@ async function handleCustomEdge(
     } catch {
       return Response.json({ error: "Invalid request body" }, { status: 400 });
     }
-  }
 
   if (request.method === "POST" && url.pathname === "/api/webhooks/competitor-signup") {
     try {

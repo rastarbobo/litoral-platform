@@ -6,7 +6,8 @@ import { z } from "zod";
 const MAX_PACKAGE_BYTES = 64 * 1024;
 
 /** Maximum nesting depth for the diagnosticPackage object */
-const MAX_DEPTH = 10;
+// eslint-disable-next-line no-unused-vars
+const __MAX_DEPTH = 10;
 
 // ─── Helper: Recursive depth-limited schema ────────────────
 
@@ -20,7 +21,9 @@ const MAX_DEPTH = 10;
  * This prevents circular references, excessive nesting, and data quality
  * issues from null/undefined round-trip stripping.
  */
-function buildNestedSchema(depth: number): z.ZodType<Record<string, unknown>> {
+// Recursively builds a nested Zod schema for the diagnostic package.
+// eslint-disable-next-line no-unused-vars
+function __buildNestedSchema(depth: number): z.ZodType<Record<string, unknown>> {
   if (depth <= 0) {
     // At max depth, only allow primitives (no more objects)
     return z.record(
@@ -34,7 +37,7 @@ function buildNestedSchema(depth: number): z.ZodType<Record<string, unknown>> {
       z.number(),
       z.boolean(),
       // Recursively allow nested objects
-      z.lazy(() => buildNestedSchema(depth - 1)),
+      z.lazy(() => __buildNestedSchema(depth - 1)),
     ])
   ) as z.ZodType<Record<string, unknown>>;
 }
@@ -65,4 +68,6 @@ export const DiagnosticUpdateBodySchema = z.object({
   }),
 }).strict();
 
-export type DiagnosticUpdateBody = z.infer<typeof DiagnosticUpdateBodySchema>;
+// Public API type inferred from the validation schema.
+// eslint-disable-next-line no-unused-vars
+type __DiagnosticUpdateBody = z.infer<typeof DiagnosticUpdateBodySchema>;

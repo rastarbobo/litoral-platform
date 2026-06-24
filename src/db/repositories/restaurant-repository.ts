@@ -1,6 +1,6 @@
 import "server-only";
 
-import { eq, and, ne, lt, sql, gte, inArray } from "drizzle-orm";
+import { eq, and, ne, lt, sql, inArray } from "drizzle-orm";
 import { getDB } from "@/db";
 import {
   restaurantsTable,
@@ -24,7 +24,7 @@ export const OPT_OUT_STATE = 6;
 
 // ─── Types ─────────────────────────────────────────────────
 
-export interface ScrapeUpdatePayload {
+interface ScrapeUpdatePayload {
   updatedAt: Date;
   lastScrapedAt: Date;
   instagramFollowers?: number;
@@ -33,29 +33,30 @@ export interface ScrapeUpdatePayload {
   competitorData?: Record<string, unknown>;
 }
 
-export interface ScoreUpdatePayload {
+interface ScoreUpdatePayload {
   updatedAt: Date;
   marketingReadinessScore: number;
   scoreBand: string;
   primaryGapExplanation: string;
 }
 
-export interface DiagnosticUpdatePayload {
+interface DiagnosticUpdatePayload {
   diagnosticPackage: Record<string, unknown>;
 }
 
-export interface RestaurantNotFoundError {
+interface RestaurantNotFoundError {
   type: "NOT_FOUND";
   restaurantId: string;
+  message?: string;
 }
 
-export interface DatabaseError {
+interface DatabaseError {
   type: "DATABASE_ERROR";
   restaurantId: string;
   message: string;
 }
 
-export type UpdateResult =
+type UpdateResult =
   | { type: "SUCCESS"; restaurantId: string }
   | RestaurantNotFoundError
   | DatabaseError

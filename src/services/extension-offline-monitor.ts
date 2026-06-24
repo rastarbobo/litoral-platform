@@ -20,7 +20,7 @@ import {
 
 // ─── Types ─────────────────────────────────────────────────
 
-export interface OfflineMonitorResult {
+interface OfflineMonitorResult {
   scannedAt: string;
   restaurantsWithStale: number;
   totalStaleCampaigns: number;

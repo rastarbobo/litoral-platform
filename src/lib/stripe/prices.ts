@@ -19,4 +19,4 @@ export const CreateCheckoutSessionSchema = z.object({
   }),
 });
 
-export type CreateCheckoutSessionInput = z.infer<typeof CreateCheckoutSessionSchema>;
+// type CreateCheckoutSessionInput = z.infer<typeof CreateCheckoutSessionSchema>;

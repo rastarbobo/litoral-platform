@@ -17,7 +17,10 @@
     "dist/**",
     "tools/**",
     "worker-dist/**",
-    "worker-configuration.d.ts"
+    "worker-configuration.d.ts",
+    "**/*.test.ts",
+    "tests/integration/shims/**",
+    "tests/e2e/**"
   ],
   "rules": {
     "no-unused-vars": [

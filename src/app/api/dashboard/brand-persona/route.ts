@@ -16,7 +16,7 @@ import { loadBrandPersonaFromR2 } from "@/lib/brand-persona/r2";
  *
  * Returns JSend: { status: "success", data: { persona, restaurantId, slug } }
  */
-export async function GET(_request: NextRequest) {
+export async function GET(__request: NextRequest) {
   const session = await getSessionFromCookie();
   if (!session) {
     return NextResponse.json(

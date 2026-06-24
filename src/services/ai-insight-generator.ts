@@ -12,6 +12,8 @@ import type { AnalystPromptContext } from "@/services/analyst-context";
 
 // ─── Types ─────────────────────────────────────────────────
 
+// Exported for consumers to catch and handle AI insight failures.
+// eslint-disable-next-line project/no-unused-module-exports
 export class AiInsightGenerationError extends Error {
   constructor(message: string, public readonly cause?: unknown) {
     super(message);

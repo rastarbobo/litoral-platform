@@ -4,7 +4,7 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { getDB } from "@/db";
 import { restaurantsTable } from "@/db/schema";
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
-import { eq, and, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { MAX_AGENCY_GLOBAL } from "@/lib/agency/types";
 
 /**
@@ -246,7 +246,7 @@ describe("One-Per-Town Scarcity + Agency Capacity Integration", () => {
       const db = getDB();
 
       // Create enough restaurants to fill agency capacity
-      const agencyProspects = [];
+      // const agencyProspects = [];
       for (let i = 0; i < MAX_AGENCY_GLOBAL; i++) {
         const id = `rest_agency_fill_${i}`;
         await db.delete(restaurantsTable).where(eq(restaurantsTable.id, id));

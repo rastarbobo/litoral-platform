@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { GET as getQueue } from "./route";
 import { POST as claimPost } from "./claim/route";
 import { POST as scheduledPost } from "./scheduled/route";
 
@@ -19,7 +18,7 @@ vi.mock("@/db/repositories/campaign-repository", () => ({
 
 import { campaignRepo } from "@/db/repositories/campaign-repository";
 
-const mockDB: any = {
+const mockDB: Record<string, unknown> & { query: { restaurantsTable: { findFirst: ReturnType<typeof vi.fn> } } } = {
   query: {
     restaurantsTable: {
       findFirst: vi.fn(),
@@ -51,7 +50,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
   // ─── 10.10: POST /api/extension/queue/claim — unauthorized returns 401 ──
   describe("POST /api/extension/queue/claim", () => {
     it("10.9: first claim returns { claimed: true }, second returns { claimed: false }", async () => {
-      (campaignRepo.claimForScheduling as any) = vi.fn()
+      (campaignRepo.claimForScheduling as ReturnType<typeof vi.fn>) = vi.fn()
         .mockResolvedValueOnce({ claimed: true })   // First call
         .mockResolvedValueOnce({ claimed: false }); // Second call (idempotent)
 
@@ -64,7 +63,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         campaignId: "camp_test",
       });
       req1.headers.set("Authorization", "Bearer valid-token");
-      const res1 = await claimPost(req1 as any);
+      const res1 = await claimPost(req1 as unknown as Request);
       const json1 = await res1.json();
       expect(json1).toEqual({ status: "success", data: { claimed: true } });
 
@@ -72,7 +71,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         campaignId: "camp_test",
       });
       req2.headers.set("Authorization", "Bearer valid-token");
-      const res2 = await claimPost(req2 as any);
+      const res2 = await claimPost(req2 as unknown as Request);
       const json2 = await res2.json();
       expect(json2).toEqual({ status: "success", data: { claimed: false } });
     });
@@ -82,7 +81,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
       const reqNoAuth = createRequest("POST", "http://localhost/api/extension/queue/claim", {
         campaignId: "camp_test",
       });
-      const resNoAuth = await claimPost(reqNoAuth as any);
+      const resNoAuth = await claimPost(reqNoAuth as unknown as Request);
       expect(resNoAuth.status).toBe(401);
       const jsonNoAuth = await resNoAuth.json();
       expect(jsonNoAuth.status).toBe("error");
@@ -94,7 +93,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
       });
       const reqNoCampaign = createRequest("POST", "http://localhost/api/extension/queue/claim", {});
       reqNoCampaign.headers.set("Authorization", "Bearer valid-token");
-      const resNoCampaign = await claimPost(reqNoCampaign as any);
+      const resNoCampaign = await claimPost(reqNoCampaign as unknown as Request);
       expect(resNoCampaign.status).toBe(400);
       const jsonNoCampaign = await resNoCampaign.json();
       expect(jsonNoCampaign.status).toBe("fail");
@@ -104,7 +103,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
   // ─── 10.11: POST /api/extension/queue/scheduled — transitions atomically ──
   describe("POST /api/extension/queue/scheduled", () => {
     it("10.11: transitions to scheduled atomically", async () => {
-      (campaignRepo.markAsScheduled as any) = vi.fn().mockResolvedValue({ scheduled: true });
+      (campaignRepo.markAsScheduled as ReturnType<typeof vi.fn>) = vi.fn().mockResolvedValue({ scheduled: true });
 
       mockDB.query.restaurantsTable.findFirst = vi.fn().mockResolvedValue({
         id: "rest_123",
@@ -116,7 +115,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         scheduledAt: "2026-06-21T14:00:00.000Z",
       });
       req.headers.set("Authorization", "Bearer valid-token");
-      const res = await scheduledPost(req as any);
+      const res = await scheduledPost(req as unknown as Request);
       const json = await res.json();
 
       expect(json).toEqual({ status: "success", data: { scheduled: true } });
@@ -133,7 +132,7 @@ describe("Story 6.2: Extension API Integration Tests", () => {
         scheduledAt: "not-a-date",
       });
       req.headers.set("Authorization", "Bearer valid-token");
-      const res = await scheduledPost(req as any);
+      const res = await scheduledPost(req as unknown as Request);
       expect(res.status).toBe(400);
     });
   });

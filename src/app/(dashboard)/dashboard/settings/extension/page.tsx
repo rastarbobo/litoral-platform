@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+
 import { getSessionFromCookie } from "@/utils/auth";
 import { redirect } from "next/navigation";
 import { resolveRestaurantForUser } from "@/lib/dashboard/user-restaurant";

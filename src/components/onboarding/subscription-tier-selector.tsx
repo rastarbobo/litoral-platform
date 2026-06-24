@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useCallback } from "react";
 import { create } from "zustand";
 import { Card } from "@/components/onboarding/shared";
 import { SectionHeading, SectionSubheading } from "@/components/onboarding/shared";
@@ -89,7 +88,7 @@ interface SubscriptionTierSelectorProps {
 // ─── Component ─────────────────────────────────────────────
 
 export function SubscriptionTierSelector({
-  restaurantId: _restaurantId,
+  restaurantId: __restaurantId,
   onCheckout,
   isCheckingOut,
   scarcityError,

@@ -7,4 +7,4 @@ export const mediaUpdateSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
 });
 
-export type MediaUpdatePayload = z.infer<typeof mediaUpdateSchema>;
+// type MediaUpdatePayload = z.infer<typeof mediaUpdateSchema>;

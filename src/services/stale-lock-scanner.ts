@@ -13,7 +13,7 @@ import { sendP1Alert } from "@/services/telegram-alerts";
  * Designed to be callable from both the Next.js API cron route and the
  * Cloudflare Worker `scheduled` handler.
  */
-export interface StaleLockScanResult {
+interface StaleLockScanResult {
   scannedAt: string;
   staleFound: number;
   reverted: number;

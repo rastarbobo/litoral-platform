@@ -33,6 +33,7 @@ export function TabBar() {
         const isActive = activeTab === key;
         return (
           <button
+            type="button"
             key={key}
             onClick={() => setActiveTab(key)}
             className="flex flex-col items-center justify-center gap-0.5 flex-1 h-full

@@ -1,7 +1,7 @@
 import type { ResultsData, WeeklyResult, OneExtraTable, AnalystInsight, GuardianReportData } from "@/lib/dashboard/types";
 import { campaignAnalyticsRepo } from "@/db/repositories/campaign-analytics-repository";
 import { getAnalystContext } from "@/services/analyst-context";
-import { generateAiInsight, AiInsightGenerationError } from "@/services/ai-insight-generator";
+import { generateAiInsight } from "@/services/ai-insight-generator";
 import { getDB } from "@/db";
 import {
   restaurantMetricsTable,
@@ -257,7 +257,7 @@ export async function computeResultsData(restaurantId: string): Promise<ResultsD
     computeAnalystInsight(restaurantId),
   ]);
 
-  let enrichedOneExtraTable = { ...oneExtraTable };
+  const enrichedOneExtraTable = { ...oneExtraTable };
   if (preSeasonClicks > 0) {
     enrichedOneExtraTable.text = oneExtraTable.text +
       `\n\nAdditionally, ${preSeasonClicks} early booking signals were detected this week — these are potential reservations for next season.`;

@@ -21,7 +21,7 @@ vi.mock("@/db/schema", () => ({
 
 import { getDB } from "@/db";
 
-const mockDB: any = {
+const mockDB: Record<string, unknown> & { query: { campaignsTable: { findMany: ReturnType<typeof vi.fn> } }; update: ReturnType<typeof vi.fn> } = {
   query: {
     campaignsTable: {
       findMany: vi.fn(),
@@ -50,7 +50,7 @@ describe("Story 6.2: Stale Lock Scanner", () => {
 
   // 10.12: Stale lock scanner reverts campaigns with claimed_at > 20 min
   it("10.12: reverts campaigns claimed > 20 minutes ago", async () => {
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    void new Date(Date.now() - 30 * 60 * 1000); // thirtyMinutesAgo
     mockDB.query.campaignsTable.findMany = vi.fn().mockResolvedValue([
       { id: "camp_stale", claimedAt: thirtyMinutesAgo, claimedBy: "test-restaurant" },
     ]);
@@ -64,7 +64,7 @@ describe("Story 6.2: Stale Lock Scanner", () => {
 
   // 10.13: Does NOT revert campaigns with scheduled_at set
   it("10.13: does NOT revert campaigns with scheduled_at set", async () => {
-    const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000);
+    void new Date(Date.now() - 30 * 60 * 1000); // thirtyMinutesAgo
     mockDB.query.campaignsTable.findMany = vi.fn().mockResolvedValue(
       [] // findMany with isNull(scheduledAt) filter returns nothing
     );
@@ -77,7 +77,7 @@ describe("Story 6.2: Stale Lock Scanner", () => {
 
   // 10.13: Campaign claimed < 20 min ago is NOT stale
   it("10.13 (detail): campaigns claimed < 20 minutes ago are not found", async () => {
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    void new Date(Date.now() - 5 * 60 * 1000); // fiveMinutesAgo
     mockDB.query.campaignsTable.findMany = vi.fn().mockResolvedValue(
       [] // Not found in query — claimedAt > 20min check
     );

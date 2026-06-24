@@ -19,6 +19,7 @@ export function CampaignRow({ campaign, onClick }: CampaignRowProps) {
 
   return (
     <button
+      type="button"
       onClick={() => onClick?.(campaign.id)}
       className="w-full flex items-start gap-3 py-3 px-4 text-left
                  border-b border-[#E5E5E7] last:border-b-0

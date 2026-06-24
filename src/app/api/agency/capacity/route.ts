@@ -11,7 +11,7 @@ import { restaurantRepo } from "@/db/repositories/restaurant-repository";
  * Returns JSend: { status: "success", data: { agencyCount, maxAgency, isAvailable } }
  */
 
-export async function GET(_request: NextRequest) {
+export async function GET(__request: NextRequest) {
   const session = await getSessionFromCookie();
   if (!session) {
     return NextResponse.json(

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { getSessionFromCookie } from "@/utils/auth";
-import { restaurantRepo } from "@/db/repositories/restaurant-repository";
+
 
 /**
  * Resolve the restaurant owned by the authenticated user.
@@ -36,7 +36,7 @@ export async function resolveRestaurantForUser(): Promise<{
   // If that field is not yet on the schema, fall back to slug heuristic.
   try {
     const restaurants = await db.query.restaurantsTable.findMany({
-      where: (fields, { or, like, eq }) =>
+      where: (fields, { or, like }) =>
         or(
           // Match by owner_email (if field exists in schema)
           like(fields.slug, `${emailDomain}%`),

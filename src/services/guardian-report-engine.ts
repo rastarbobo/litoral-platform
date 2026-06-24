@@ -15,8 +15,6 @@ import {
   DEFAULT_SEO_GUARDIAN_CONFIG,
 } from "@/db/schema";
 import type {
-  GuardianReport,
-  ReviewCoverage,
   GuardianReportData,
   SeoGuardianConfig,
 } from "@/db/schema";
@@ -25,7 +23,7 @@ import { tryCatch } from "@/lib/try-catch";
 
 // ─── Types ────────────────────────────────────────────────
 
-export type { GuardianReportData, ReviewCoverage };
+type ReviewCoverage = { drafted: number; approved: number; published: number; total: number };
 
 // ─── Core Computation ────────────────────────────────────
 
@@ -35,7 +33,7 @@ export type { GuardianReportData, ReviewCoverage };
  * @param restaurantId - The restaurant to generate a report for
  * @returns GuardianReportData or null if not enough data
  */
-export async function generateMonthlyGuardianReport(
+async function generateMonthlyGuardianReport(
   restaurantId: string,
 ): Promise<GuardianReportData | null> {
   const db = getDB();

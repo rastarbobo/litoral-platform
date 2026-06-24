@@ -117,7 +117,7 @@ export function HibernateView({
 
               {/* R2 Assets */}
               <div className="flex items-center gap-2">
-                <Image className="w-4 h-4 text-[#717786] flex-shrink-0" />
+                <Image className="w-4 h-4 text-[#717786] flex-shrink-0" alt="" />
                 <span
                   className="text-[15px] text-[#414755]"
                   style={{ fontFamily: "Inter, sans-serif" }}
@@ -173,6 +173,7 @@ export function HibernateView({
         {/* Reactivate button */}
         {eligibility?.eligibleForReactivation !== false && (
           <button
+            type="button"
             onClick={onReactivate}
             disabled={isReactivating}
             className="w-full py-3 px-6 rounded-lg font-semibold text-[17px]

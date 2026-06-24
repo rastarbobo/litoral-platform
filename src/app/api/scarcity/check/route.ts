@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
-import { withRateLimit, RATE_LIMITS } from "@/utils/with-rate-limit";
+import { withRateLimit } from "@/utils/with-rate-limit";
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
 import { ScarcityCheckParamsSchema } from "@/lib/scarcity/types";
 

@@ -1,9 +1,9 @@
 import { analyticsRepo } from "@/db/repositories/analytics-repository";
 
-export interface AnalyticsQueueMessage {
+interface AnalyticsQueueMessage {
   prospectId: string;
   eventType: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export async function handleAnalyticsQueue(batch: MessageBatch<AnalyticsQueueMessage>): Promise<void> {

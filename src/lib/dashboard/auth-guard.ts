@@ -11,7 +11,7 @@ interface StoredSession {
   lastVerifiedAt: number; // epoch ms
 }
 
-export interface AuthGuardResult {
+interface AuthGuardResult {
   session: DashboardSession | null;
   isValid: boolean;
 }

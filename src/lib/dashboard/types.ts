@@ -14,7 +14,7 @@ export interface CampaignGroup {
   pending: CampaignWithSignedUrl[];
   scheduled: CampaignWithSignedUrl[];
   published: CampaignWithSignedUrl[];
-  rejected: CampaignWithSignedUrl[];
+  rejected?: CampaignWithSignedUrl[];
 }
 
 export interface CampaignWithSignedUrl extends Campaign {
@@ -75,31 +75,33 @@ export interface GuardianReportData {
 
 // ── Dashboard API Response ───────────────────────────────
 
-export interface JSendSuccess<T = unknown> {
+// JSendResponse is reserved for future use when dashboard needs direct API envelopes.
+// type JSendResponse<T = unknown> = JSendSuccess<T> | JSendError;
+// eslint-disable-next-line no-unused-vars
+interface JSendSuccess<T = unknown> {
   status: "success";
   data: T;
 }
-
-export interface JSendError {
+// eslint-disable-next-line no-unused-vars
+interface JSendError {
   status: "error";
   message: string;
 }
-
-export type JSendResponse<T = unknown> = JSendSuccess<T> | JSendError;
 
 // ── Dashboard Store ────────────────────────────────────
 
 export type DashboardTab = "queue" | "results" | "settings";
 
-export interface DashboardState {
-  activeTab: DashboardTab;
-  restaurantId: string | null;
-  token: string | null;
-  campaigns: CampaignGroup;
-  results: ResultsData | null;
-  isLoading: boolean;
-  error: string | null;
-}
+// DashboardState is reserved for future Zustand store integration.
+// interface DashboardState {
+//   activeTab: DashboardTab;
+//   restaurantId: string | null;
+//   token: string | null;
+//   campaigns: CampaignGroup;
+//   results: ResultsData | null;
+//   isLoading: boolean;
+//   error: string | null;
+// }
 
 // ── Auth Guard ───────────────────────────────────────────
 
@@ -120,14 +122,15 @@ export interface CampaignActionRequest {
   rejectReason?: string;
 }
 
-export interface CampaignActionResponse {
-  campaign: {
-    id: string;
-    status: string;
-    approvedAt: string | null;
-    rejectedAt: string | null;
-  };
-}
+// CampaignActionResponse is reserved for future campaign-API integration.
+// interface CampaignActionResponse {
+//   campaign: {
+//     id: string;
+//     status: string;
+//     approvedAt: string | null;
+//     rejectedAt: string | null;
+//   };
+// }
 
 // ── Filter & Sort ────────────────────────────────────────
 

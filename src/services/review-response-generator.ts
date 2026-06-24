@@ -13,7 +13,7 @@ import type { Restaurant } from "@/db/schema";
 
 // ─── Types ────────────────────────────────────────────────
 
-export interface GoogleReviewData {
+interface GoogleReviewData {
   reviewId: string;
   reviewerName: string;
   rating: number; // 1-5
@@ -21,12 +21,12 @@ export interface GoogleReviewData {
   createdAt?: string;
 }
 
-export interface ReviewResponseResult {
+interface ReviewResponseResult {
   response: string;
   fallbackUsed: boolean;
 }
 
-export class ReviewResponseGenerationError extends Error {
+class ReviewResponseGenerationError extends Error {
   constructor(message: string, public readonly cause?: unknown) {
     super(message);
     this.name = "ReviewResponseGenerationError";
@@ -64,6 +64,8 @@ const FALLBACK_TEMPLATES: Record<number, string[]> = {
  * @param aiGatewayFetch - Injected fetch function for AI Gateway calls (injectable for testing)
  * @returns The generated response text and whether a fallback was used
  */
+// Public API — consumed by review response service consumers (e.g. n8n workflow, API route).
+// eslint-disable-next-line project/no-unused-module-exports
 export async function generateReviewResponse(
   review: GoogleReviewData,
   restaurant: Restaurant,

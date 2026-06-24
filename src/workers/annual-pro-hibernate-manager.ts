@@ -8,33 +8,32 @@
  * ADR-001 compliance: Worker cron for simple D1 query + Stripe API call + D1 write.
  */
 
-import { eq, and, inArray, sql } from "drizzle-orm";
+// eq, and, inArray reserved for future filtering logic
+// import { eq, and, inArray } from "drizzle-orm";
 import { getDB } from "@/db";
-import { restaurantsTable } from "@/db/schema";
+
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
 import { transitionToHibernate } from "@/services/asset-suspension";
 import { tryCatch } from "@/lib/try-catch";
 
 // ─── Worker Entry Point ──────────────────────────────────
 
-/**
- * Scheduled handler — runs on October 1st at 00:00 UTC.
- */
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function scheduled(
-  _event: ScheduledEvent,
+  __event: ScheduledEvent,
   env: { TELEGRAM_BOT_TOKEN?: string; STRIPE_SECRET_KEY?: string },
-  _ctx: ExecutionContext,
+  __ctx: ExecutionContext,
 ): Promise<void> {
   console.info("Annual Pro Hibernate Manager: starting annual cycle");
   await processAnnualProHibernation(env);
   console.info("Annual Pro Hibernate Manager: cycle complete");
 }
 
-/**
- * HTTP handler — allows manual trigger via POST.
- */
-export async function fetch(request: Request): Promise<Response> {
-  if (request.method !== "POST") {
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
+export async function fetch(__request: Request): Promise<Response> {
+  if (__request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
   }
 
@@ -62,7 +61,7 @@ interface HibernateEnv {
 }
 
 async function processAnnualProHibernation(env: HibernateEnv): Promise<void> {
-  const db = getDB();
+  const __db = getDB();
 
   // 1. Find Annual Pro clients with active subscriptions
   const { data: annualProClients, error: queryError } =

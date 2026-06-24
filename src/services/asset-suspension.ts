@@ -7,7 +7,7 @@
  */
 
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
-import type { DatabaseError } from "@/db/repositories/restaurant-repository";
+
 
 /**
  * Suspend R2 access for a restaurant.
@@ -19,7 +19,7 @@ import type { DatabaseError } from "@/db/repositories/restaurant-repository";
  *
  * @returns true if suspension succeeded, false otherwise
  */
-export async function suspendR2Access(restaurantId: string): Promise<boolean> {
+async function suspendR2Access(restaurantId: string): Promise<boolean> {
   console.info("AssetSuspension: suspending R2 access", { restaurantId });
 
   const result = await restaurantRepo.suspendR2Access(restaurantId);

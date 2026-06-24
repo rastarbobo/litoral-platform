@@ -11,7 +11,7 @@ function getTargetSeasonStart(now: Date): string {
   return `${month}-${day}`;
 }
 
-export async function processSeasonProximityTriggers(env: any, now: Date = new Date()): Promise<number> {
+export async function processSeasonProximityTriggers(env: Record<string, unknown>, now: Date = new Date()): Promise<number> {
   // We want to trigger 4 weeks before the peak season (using UTC).
   const targetSeasonStart = getTargetSeasonStart(now);
 
@@ -60,7 +60,7 @@ export async function processSeasonProximityTriggers(env: any, now: Date = new D
   return succeeded;
 }
 
-export async function processCompetitorSignup(env: any, competitorId: string): Promise<number> {
+export async function processCompetitorSignup(env: Record<string, unknown>, competitorId: string): Promise<number> {
   const competitor = await restaurantRepo.findById(competitorId);
 
   if (!competitor || !competitor.cuisineType?.trim() || !competitor.locationArea?.trim()) {

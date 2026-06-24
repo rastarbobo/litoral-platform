@@ -164,7 +164,8 @@ export function StickyCTABar() {
   return (
     <div className="fixed bottom-0 left-0 right-0 p-4 border-t border-[#E5E5E7] bg-white/80 backdrop-blur-[20px] z-50 flex justify-center">
       <div className="w-full max-w-xl">
-        <button 
+        <button
+          type="button"
           aria-label="Request contact from Litoral Agency"
           className="w-full bg-[#005bc1] hover:bg-[#0070eb] active:bg-[#004493] text-white text-[17px] font-semibold py-[14px] rounded-[12px] shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-[#005bc1] focus-visible:ring-offset-2"
         >

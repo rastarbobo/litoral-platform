@@ -12,7 +12,7 @@
  * (UPDATE ... WHERE operational_mode = 'peak_season').
  */
 
-import { eq, and, sql, lt, gte } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { getDB } from "@/db";
 import {
   restaurantsTable,
@@ -24,24 +24,20 @@ import { tryCatch } from "@/lib/try-catch";
 
 // ─── Worker Entry Point ──────────────────────────────────
 
-/**
- * Scheduled handler — Cloudflare Workers cron trigger.
- * Called once daily at 03:00 UTC.
- */
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function scheduled(
   _event: ScheduledEvent,
   env: { TELEGRAM_BOT_TOKEN?: string },
-  _ctx: ExecutionContext,
+  __ctx: ExecutionContext,
 ): Promise<void> {
   console.info("Seasonal Mode Detector: starting daily scan");
   await detectAndTransitionSeasons(env);
   console.info("Seasonal Mode Detector: daily scan complete");
 }
 
-/**
- * HTTP handler — allows manual trigger via authenticated request.
- * Useful for testing and operator overrides.
- */
+// Cloudflare Worker entry point — not imported by any other module.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function fetch(request: Request): Promise<Response> {
   // Only allow POST from local/dev environment for manual triggers
   if (request.method !== "POST") {
@@ -111,7 +107,7 @@ async function detectAndTransitionSeasons(env: DetectorEnv): Promise<void> {
   let transitionedCount = 0;
 
   // 2. Check each restaurant against its seo_guardian_config
-  for (const restaurant of data) {
+  for (const restaurant of peakSeasonRestaurants) {
     // Story 7.5: Explicit hibernate guard — never transition hibernate restaurants
     if (restaurant.operationalMode === OPERATIONAL_MODE.HIBERNATE) {
       console.info("Seasonal Mode Detector: skipping hibernate restaurant", {

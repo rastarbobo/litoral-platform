@@ -13,7 +13,7 @@ import {
   validateOnboardingToken,
   sha256Hash,
 } from "@/lib/onboarding/tokens";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 /**
  * Integration tests for the prospect onboarding & subscription lifecycle

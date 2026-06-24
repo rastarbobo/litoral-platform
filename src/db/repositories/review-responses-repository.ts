@@ -14,7 +14,7 @@ import { createId } from "@paralleldrive/cuid2";
 
 // ─── Types ────────────────────────────────────────────────
 
-export interface CreateDraftInput {
+interface CreateDraftInput {
   restaurantId: string;
   reviewId: string;
   reviewText: string;
@@ -24,12 +24,12 @@ export interface CreateDraftInput {
   fallbackUsed: boolean;
 }
 
-export interface DatabaseError {
+interface DatabaseError {
   type: "DATABASE_ERROR";
   message: string;
 }
 
-export type RepositoryResult<T> =
+type RepositoryResult<T> =
   | { type: "SUCCESS"; data: T }
   | DatabaseError;
 

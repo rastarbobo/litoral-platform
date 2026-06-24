@@ -11,7 +11,7 @@ import type { CampaignAnalytics } from "@/db/schema";
  * used by the Results Dashboard "One Extra Table" ROI computation.
  */
 
-export class CampaignAnalyticsRepository {
+class CampaignAnalyticsRepository {
   /**
    * Sum of impressions for all campaigns published during a given week.
    */

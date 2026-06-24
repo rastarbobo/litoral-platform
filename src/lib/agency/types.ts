@@ -13,11 +13,11 @@ export const AgencyEnrollmentSchema = z.object({
   restaurantId: z.string().regex(/^rest_[a-zA-Z0-9]+$/),
 });
 
-export type AgencyEnrollment = z.infer<typeof AgencyEnrollmentSchema>;
+// type AgencyEnrollment = z.infer<typeof AgencyEnrollmentSchema>;
 
-/** Agency capacity state returned by the check endpoint */
-export interface AgencyCapacityState {
-  agencyCount: number;
-  maxAgency: number;
-  isAvailable: boolean;
-}
+// Agency capacity state reserved for future capacity endpoints.
+// interface AgencyCapacityState {
+//   agencyCount: number;
+//   maxAgency: number;
+//   isAvailable: boolean;
+// }

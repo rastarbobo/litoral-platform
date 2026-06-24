@@ -60,13 +60,13 @@ function createMockDB(overrides: Record<string, unknown> = {}) {
       })),
     })),
   };
-  return { ...defaultDB, ...overrides } as any;
+  return { ...defaultDB, ...overrides } as Record<string, unknown>;
 }
 
 // ─── Tests ─────────────────────────────────────────────────
 
 describe("CampaignRepository - Revision Operations (Story 5.2)", () => {
-  let mockDB: any;
+  let mockDB: Record<string, unknown>;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -207,7 +207,7 @@ describe("CampaignRepository - Revision Operations (Story 5.2)", () => {
 });
 
 describe("CampaignRepository - Status Guard (Story 5.2 AC 8)", () => {
-  let mockDB: any;
+  let mockDB: Record<string, unknown>;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -256,7 +256,7 @@ describe("CampaignRepository - Status Guard (Story 5.2 AC 8)", () => {
 });
 
 describe("CampaignRepository - revisionCount single-increment contract (Patch CR-5.2-2)", () => {
-  let mockDB: any;
+  let mockDB: Record<string, unknown>;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -277,7 +277,7 @@ describe("CampaignRepository - revisionCount single-increment contract (Patch CR
     await campaignRepo.requestRevision("camp_test");
 
     // Verify updateStatus was NOT called with revisionCount parameter
-    const updateCalls = mockDB.update.mock.calls;
+    void mockDB.update.mock.calls;
     // update is called inside updateStatus, but revisionCount should not be set
     const setCall = mockDB.update().set.mock;
     // The set payload should not contain revisionCount
@@ -305,7 +305,7 @@ describe("CampaignRepository - revisionCount single-increment contract (Patch CR
 
   it("should keep revisionCount at 1 after full revision cycle (requestRevision + updateCaptionForRevision)", async () => {
     // Mock the campaign in pending_approval
-    let revisionCount = 0;
+    const revisionCount = 0;
 
     mockDB.query.campaignsTable.findFirst = vi.fn().mockResolvedValue({
       id: "camp_test",
@@ -335,7 +335,7 @@ describe("CampaignRepository - revisionCount single-increment contract (Patch CR
 });
 
 describe("CampaignRepository - listAllApprovedOlderThan (Story 6.5)", () => {
-  let mockDB: any;
+  let mockDB: Record<string, unknown>;
 
   beforeEach(() => {
     mockDB = createMockDB();

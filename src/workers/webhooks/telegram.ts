@@ -4,7 +4,7 @@
  * Never expose n8n directly to internet-facing webhooks.
  */
 
-export interface TelegramEnv {
+interface TelegramEnv {
   TELEGRAM_UPDATES_QUEUE: { send(message: TelegramUpdate): Promise<void> };
   TELEGRAM_WEBHOOK_SECRET: string; // X-Telegram-Bot-Api-Secret-Token header value
   TELEGRAM_DEDUP_KV?: KVNamespace; // Persistent dedup cache across Worker isolates (Patch 1)
@@ -37,42 +37,44 @@ interface TelegramUpdate {
  * - review_response:edit:{responseId}
  * - review_response:skip:{responseId}
  */
-export async function handleReviewResponseCallback(
-  callbackData: string,
-  chatId: number,
-  env: { DB?: D1Database; TELEGRAM_BOT_TOKEN?: string },
-): Promise<boolean> {
-  const match = callbackData.match(/^review_response:(approve|edit|skip):(.+)$/);
-  if (!match) return false;
+// Reserved — may be wired into a future fast-path handler.
+// async function handleReviewResponseCallback(
+//   callbackData: string,
+//   chatId: number,
+//   env: { DB?: D1Database; TELEGRAM_BOT_TOKEN?: string },
+// ): Promise<boolean> {
+//   const match = callbackData.match(/^review_response:(approve|edit|skip):(.+)$/);
+//   if (!match) return false;
+// 
+//   const [, action, responseId] = match;
+// 
+//   try {
+//     if (action === "approve") {
+//       await updateReviewResponseStatus(responseId, "approved", env);
+//       await sendCallbackConfirmation(chatId, "Response approved! It will be published via the Chrome Extension.", env);
+//     } else if (action === "edit") {
+//       await sendCallbackConfirmation(
+//         chatId,
+//         "Please reply with your edited response text. I'll update the response and re-submit it for your review.",
+//         env,
+//       );
+//     } else if (action === "skip") {
+//       await updateReviewResponseStatus(responseId, "rejected", env);
+//       await sendCallbackConfirmation(chatId, "Response skipped. The review has been logged.", env);
+//     }
+//     return true;
+//   } catch (error) {
+//     console.error("Review response callback handling failed", {
+//       error: error instanceof Error ? error.message : "Unknown",
+//       responseId,
+//       action,
+//     });
+//     return false;
+//   }
+// }
 
-  const [, action, responseId] = match;
-
-  try {
-    if (action === "approve") {
-      await updateReviewResponseStatus(responseId, "approved", env);
-      await sendCallbackConfirmation(chatId, "Response approved! It will be published via the Chrome Extension.", env);
-    } else if (action === "edit") {
-      await sendCallbackConfirmation(
-        chatId,
-        "Please reply with your edited response text. I'll update the response and re-submit it for your review.",
-        env,
-      );
-    } else if (action === "skip") {
-      await updateReviewResponseStatus(responseId, "rejected", env);
-      await sendCallbackConfirmation(chatId, "Response skipped. The review has been logged.", env);
-    }
-    return true;
-  } catch (error) {
-    console.error("Review response callback handling failed", {
-      error: error instanceof Error ? error.message : "Unknown",
-      responseId,
-      action,
-    });
-    return false;
-  }
-}
-
-async function updateReviewResponseStatus(
+// eslint-disable-next-line no-unused-vars
+async function __updateReviewResponseStatus(
   responseId: string,
   status: string,
   _env: { DB?: D1Database },
@@ -104,7 +106,8 @@ async function updateReviewResponseStatus(
   }
 }
 
-async function sendCallbackConfirmation(
+// eslint-disable-next-line no-unused-vars
+async function __sendCallbackConfirmation(
   chatId: number,
   text: string,
   env: { TELEGRAM_BOT_TOKEN?: string },
@@ -140,8 +143,10 @@ function jsend(status: "success" | "error" | "fail", data: unknown, statusCode =
   });
 }
 
+// Cloudflare Worker default export — consumed by the runtime.
+// eslint-disable-next-line import/no-anonymous-default-export
 export default {
-  async fetch(request: Request, env: TelegramEnv, ctx: any): Promise<Response> {
+  async fetch(request: Request, env: TelegramEnv, __ctx: ExecutionContext): Promise<Response> {
     try {
       // 1. Validate HTTP method
       if (request.method !== "POST") {

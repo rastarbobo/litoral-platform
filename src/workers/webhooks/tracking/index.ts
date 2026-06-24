@@ -1,12 +1,12 @@
-export interface Env {
-  TRACKING_EVENTS_QUEUE: any;
+interface TrackingEnv {
+  TRACKING_EVENTS_QUEUE: { send(message: Record<string, unknown>): Promise<void> };
   INTERNAL_API_KEY?: string;
 }
 
 const rateLimiter = new Map<string, { count: number; expiresAt: number }>();
 
-export default {
-  async fetch(request: Request, env: Env, ctx: any): Promise<Response> {
+const trackingHandler = {
+  async fetch(request: Request, env: TrackingEnv, __ctx: ExecutionContext): Promise<Response> {
     try {
       const url = new URL(request.url);
       const isGet = request.method === "GET";
@@ -30,9 +30,9 @@ export default {
             headers: { "Content-Type": "application/json" }
           });
         }
-        const body = await request.json() as any;
-        prospectId = body.prospectId;
-        event = body.event;
+        const body = await request.json() as Record<string, unknown>;
+        prospectId = typeof body.prospectId === "string" ? body.prospectId : null;
+        event = typeof body.event === "string" ? body.event : null;
       } else {
         prospectId = url.searchParams.get("prospectId");
         event = url.searchParams.get("event");
@@ -88,3 +88,5 @@ export default {
     }
   }
 };
+
+export default trackingHandler;

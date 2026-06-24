@@ -51,7 +51,7 @@ interface DashboardStore {
   setRestaurantId: (id: string) => void;
   setToken: (token: string) => void;
   setCampaigns: (campaigns: CampaignGroup) => void;
-  setResults: (results: ResultsData) => void;
+  setResults: (results: ResultsData | null) => void;
   setLoading: (isLoading: boolean) => void;
   setError: (error: string | null) => void;
 

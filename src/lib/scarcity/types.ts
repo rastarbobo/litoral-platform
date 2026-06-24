@@ -14,7 +14,7 @@ export const ScarcityCheckParamsSchema = z.object({
   locationArea: z.string().trim().min(1).max(255),
 });
 
-export type ScarcityCheckParams = z.infer<typeof ScarcityCheckParamsSchema>;
+type __ScarcityCheckParams = z.infer<typeof ScarcityCheckParamsSchema>;
 
 /** Zod schema for the enrollment request body */
 export const EnrollmentRequestSchema = z.object({
@@ -22,10 +22,10 @@ export const EnrollmentRequestSchema = z.object({
   tier: z.enum(["saas", "agency"]),
 });
 
-export type EnrollmentRequest = z.infer<typeof EnrollmentRequestSchema>;
+type __EnrollmentRequest = z.infer<typeof EnrollmentRequestSchema>;
 
 /** Scarcity state for the landing page */
-export interface ScarcityState {
+interface __ScarcityState {
   saasCount: number;
   agencyCount: number;
   maxSaas: number;

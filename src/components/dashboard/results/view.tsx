@@ -128,7 +128,7 @@ export function ResultsView({ data }: { data?: ResultsData | null }) {
           className="text-[16px] text-[#414755] leading-[21px] italic"
           style={{ fontFamily: "Inter, sans-serif" }}
         >
-          "{data.analystInsight.quote}"
+          &ldquo;{data.analystInsight.quote}&rdquo;
         </p>
         <p
           className="text-[13px] text-[#717786] mt-2"
@@ -149,7 +149,7 @@ export function ResultsView({ data }: { data?: ResultsData | null }) {
       )}
 
       {/* Pre-Season Booking Intent Banner (Story 7.4, AC 4) */}
-      {data.preSeasonBooking != null && data.preSeasonBooking.clicks > 0 && (
+      {data.preSeasonBooking !== null && data.preSeasonBooking !== undefined && data.preSeasonBooking.clicks > 0 && (
         <PreSeasonBookingBanner clicks={data.preSeasonBooking.clicks} />
       )}
 
@@ -287,7 +287,7 @@ function GuardianModeBanner({
             className="text-[12px] text-[#717786]"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            Litoral is keeping your Google presence alive while you're closed. You don't need to do anything.
+            Litoral is keeping your Google presence alive while you&apos;re closed. You don&apos;t need to do anything.
           </p>
         </div>
       </div>
@@ -395,7 +395,7 @@ function GuardianReportCard({
           className="text-[13px] text-[#717786]"
           style={{ fontFamily: "Inter, sans-serif", lineHeight: "18px" }}
         >
-          Litoral is keeping your Google presence alive while you're closed.{report.postsPublished > 0 ? ` ${report.postsPublished} maintenance post${report.postsPublished !== 1 ? "s" : ""} published this month.` : ""}
+          Litoral is keeping your Google presence alive while you&apos;re closed.{report.postsPublished > 0 ? ` ${report.postsPublished} maintenance post${report.postsPublished !== 1 ? "s" : ""} published this month.` : ""}
         </p>
       </div>
     </Level1Card>

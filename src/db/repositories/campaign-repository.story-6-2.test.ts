@@ -53,13 +53,13 @@ function createMockDB(overrides: Record<string, unknown> = {}) {
       })),
     })),
   };
-  return { ...defaultDB, ...overrides } as any;
+  return { ...defaultDB, ...overrides } as Record<string, unknown>;
 }
 
 // ─── Tests: Story 6.2 — Database-layer pending_schedule Lock ─────
 
 describe("Story 6.2: Extension Publishing Lock", () => {
-  let mockDB: any;
+  let mockDB: Record<string, unknown>;
 
   beforeEach(() => {
     mockDB = createMockDB();
@@ -214,11 +214,11 @@ describe("Story 6.2: Extension Publishing Lock", () => {
 
       mockDB.query.campaignsTable.findMany = vi
         .fn()
-        .mockResolvedValue(allCampaigns.filter((c) => c.platforms != null));
+        .mockResolvedValue(allCampaigns.filter((c) => c.platforms !== null));
 
       const result = await campaignRepo.listApproved("rest_123");
 
-      expect(result.some((c) => c.platforms == null)).toBe(false);
+      expect(result.some((c) => c.platforms === null)).toBe(false);
     });
   });
 

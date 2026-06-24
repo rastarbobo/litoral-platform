@@ -1,4 +1,4 @@
-import { describe, expect, test, beforeEach } from "vitest";
+import { describe, expect, test } from "vitest";
 
 /**
  * Extension Auth Token — Unit Tests (Story 5.6)

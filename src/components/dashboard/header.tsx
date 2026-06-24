@@ -33,6 +33,7 @@ export function DashboardHeader({ title, showBack, onBackClick }: DashboardHeade
     >
       {showBack && (
         <button
+          type="button"
           onClick={handleBack}
           className="flex items-center justify-center w-10 h-10 -ml-2 touch-manipulation"
           aria-label="Back"

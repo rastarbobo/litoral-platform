@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Check, Clock } from "lucide-react";
+// Check icon reserved for future timeline variants
+// import { Check } from "lucide-react";
 
 export interface TimelineEntry {
   status: string;

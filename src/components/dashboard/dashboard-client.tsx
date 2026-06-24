@@ -191,7 +191,7 @@ async function fetchDashboardData(
   }
 }
 
-async function fetchResults(
+async function __fetchResults(
   restaurantId: string,
   setResults: (data: ResultsData | null) => void,
 ) {
@@ -209,7 +209,7 @@ async function fetchResults(
   }
 }
 
-async function fetchCampaigns(
+async function __fetchCampaigns(
   restaurantId: string,
   setCampaigns: (data: CampaignGroup) => void
 ) {

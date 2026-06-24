@@ -9,7 +9,7 @@ import {
   analyticsEventsTable,
 } from "@/db/schema";
 import { restaurantRepo } from "@/db/repositories/restaurant-repository";
-import { eq, and } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 /**
  * Integration tests for Worker API repository operations

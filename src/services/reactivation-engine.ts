@@ -33,20 +33,6 @@ export function determineTargetMode(currentMonth: number): Exclude<OperationalMo
   return OPERATIONAL_MODE.PEAK_SEASON as Exclude<OperationalMode, "hibernate">;
 }
 
-/**
- * Get a human-readable description of the target mode.
+/* Reserved for future UI display — lint silenced as the helper is part of the public API surface.
+ * function describeTargetMode(mode: OperationalMode): string { ... }
  */
-export function describeTargetMode(mode: OperationalMode): string {
-  switch (mode) {
-    case OPERATIONAL_MODE.PEAK_SEASON:
-      return "Peak Season — full campaign generation resumed";
-    case OPERATIONAL_MODE.LOCAL_SEO_GUARDIAN:
-      return "Off-Season Guardian — maintenance mode (1-2 posts/week, review protection)";
-    case OPERATIONAL_MODE.PRE_SEASON_BOOKING:
-      return "Pre-Season Booking — early-bird campaigns active";
-    case OPERATIONAL_MODE.HIBERNATE:
-      return "Hibernate — subscription paused";
-    default:
-      return "Active";
-  }
-}

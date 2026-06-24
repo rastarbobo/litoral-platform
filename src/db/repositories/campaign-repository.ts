@@ -8,18 +8,19 @@ import { tryCatch } from "@/lib/try-catch";
 
 // ─── Types ───────────────────────────────────────────────
 
-export interface CampaignNotFoundError {
+interface CampaignNotFoundError {
   type: "CAMPAIGN_NOT_FOUND";
   campaignId: string;
+  message?: string;
 }
 
-export interface DatabaseError {
+interface DatabaseError {
   type: "DATABASE_ERROR";
   campaignId: string;
   message: string;
 }
 
-export type CampaignResult =
+type CampaignResult =
   | { type: "SUCCESS"; campaign: Campaign }
   | CampaignNotFoundError
   | DatabaseError;

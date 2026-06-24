@@ -11,26 +11,24 @@ import { restaurantRepo } from "@/db/repositories/restaurant-repository";
 import { determineTargetMode } from "@/services/reactivation-engine";
 import { restoreR2Access } from "@/services/asset-suspension";
 import { tryCatch } from "@/lib/try-catch";
-import { OPERATIONAL_MODE } from "@/db/schema";
+
 
 // ─── Worker Entry Point ──────────────────────────────────
 
-/**
- * Scheduled handler — runs on March 1st at 00:00 UTC.
- */
+// Cloudflare Worker entry point — consumed by the runtime, not imported.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function scheduled(
   _event: ScheduledEvent,
   env: { TELEGRAM_BOT_TOKEN?: string },
-  _ctx: ExecutionContext,
+  __ctx: ExecutionContext,
 ): Promise<void> {
   console.info("Annual Pro Reactivation Manager: starting annual reactivation");
   await processAnnualProReactivation(env);
   console.info("Annual Pro Reactivation Manager: reactivation complete");
 }
 
-/**
- * HTTP handler — allows manual trigger via POST.
- */
+// Cloudflare Worker entry point — consumed by the runtime, not imported.
+// eslint-disable-next-line project/no-unused-module-exports
 export async function fetch(request: Request): Promise<Response> {
   if (request.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });

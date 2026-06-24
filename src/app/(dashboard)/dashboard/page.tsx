@@ -1,5 +1,5 @@
 import React from "react";
-import { redirect } from "next/navigation";
+
 import { cookies } from "next/headers";
 import { getDB } from "@/db";
 import { restaurantsTable } from "@/db/schema";

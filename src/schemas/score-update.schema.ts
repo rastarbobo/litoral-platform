@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 // ─── Score Band Domain ─────────────────────────────────────
-export const SCORE_BAND = {
+const SCORE_BAND = {
   A: "A",
   B: "B",
   C: "C",
@@ -10,7 +10,7 @@ export const SCORE_BAND = {
   NEEDS_WORK: "Needs Work",
 } as const;
 
-export const scoreBandTuple = Object.values(SCORE_BAND) as [string, ...string[]];
+const scoreBandTuple = Object.values(SCORE_BAND) as [string, ...string[]];
 
 // ─── Schema ────────────────────────────────────────────────
 
@@ -25,4 +25,4 @@ export const ScoreUpdateBodySchema = z.object({
   primaryGapExplanation: z.string().min(1).max(2000),
 }).strict();
 
-export type ScoreUpdateBody = z.infer<typeof ScoreUpdateBodySchema>;
+// type ScoreUpdateBody = z.infer<typeof ScoreUpdateBodySchema>;

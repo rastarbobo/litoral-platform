@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import {
@@ -31,7 +31,7 @@ const TARGET_OPTIONS = [
 
 // ─── Constants ─────────────────────────────────────────────
 
-const INITIAL_VALUES: Record<string, string | string[]> = {
+const __INITIAL_VALUES: Record<string, string | string[]> = {
   cuisinePhilosophy: "",
   voice: "",
   targetCustomer: [],
