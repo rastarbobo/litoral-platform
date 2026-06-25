@@ -1,6 +1,6 @@
 "use client";
 
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 const NextTopLoader = lazy(async () => {
   const topLoaderModule = await import("nextjs-toploader");
@@ -13,6 +13,16 @@ const NextTopLoader = lazy(async () => {
 });
 
 export function NavigationTopLoader() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <Suspense fallback={null}>
       <NextTopLoader

@@ -75,16 +75,17 @@ export function EmailVerificationDialog() {
           <DialogDescription>
             Please verify your email address to access all features. We sent a verification link to {session.user.email}.
             The verification link will expire in {Math.floor(EMAIL_VERIFICATION_TOKEN_EXPIRATION_SECONDS / 3600)} hours.
-
-            {!isProd && (
-              <Alert className="mt-4 mb-2">
+          </DialogDescription>
+          {!isProd && (
+            <div className="mt-4 mb-2">
+              <Alert>
                 <AlertTitle>Development mode</AlertTitle>
                 <AlertDescription>
-                  You can find the verification link in the console.
+                  Check the <strong>server console</strong> (where <code>pnpm dev</code> runs) for the verification link.
                 </AlertDescription>
               </Alert>
-            )}
-          </DialogDescription>
+            </div>
+          )}
         </DialogHeader>
         <div className="flex flex-col gap-4">
           <Button
